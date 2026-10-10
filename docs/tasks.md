@@ -24,25 +24,25 @@
 
 ## Incremento 1 — Contrato y motor determinístico (rama `feature/motor`)
 
-- [ ] **T1.1 Contrato.** `spec/timesheet_spec.yaml` completo (design §3), un maestro mínimo y `backend/app/contract/` con los modelos pydantic `Contract` y `Master` y su loader.
+- [x] **T1.1 Contrato.** `spec/timesheet_spec.yaml` completo (design §3), un maestro mínimo y `backend/app/contract/` con los modelos pydantic `Contract` y `Master` y su loader.
   *Listo cuando:* hay tests de que el contrato válido carga, el YAML con un campo inválido falla nombrando el campo (R1.3) y el hash es estable.
-- [ ] **T1.2 Modelos del motor.** `InputFile`, `Finding`, `Disposition`, `FileResult` y `BatchResult` en `engine/models.py`.
+- [x] **T1.2 Modelos del motor.** `InputFile`, `Finding`, `Disposition`, `FileResult` y `BatchResult` en `engine/models.py`.
   *Listo cuando:* importan sin errores y pasa `test_engine_does_not_import_ai` (también prohíbe importar `db`).
-- [ ] **T1.3 Ingesta.** Lectura de CSV (UTF-8/BOM/Latin-1, `,`/`;`), XLSX (primera hoja, fechas nativas) y ZIP (subcarpetas, `__MACOSX`, ocultos), y límite de tamaño.
+- [x] **T1.3 Ingesta.** Lectura de CSV (UTF-8/BOM/Latin-1, `,`/`;`), XLSX (primera hoja, fechas nativas) y ZIP (subcarpetas, `__MACOSX`, ocultos), y límite de tamaño.
   *Listo cuando:* hay tests por cada formato y de zip corrupto (R2.3–R2.6).
-- [ ] **T1.4 Nombres: D01, D02, D03.**
+- [x] **T1.4 Nombres: D01, D02, D03.**
   *Listo cuando:* pasan `test_d01_missing_expected_file`, `test_d02_unexpected_or_bad_name`, `test_d02_duplicate_site` y `test_d03_period_mismatch`.
-- [ ] **T1.5 Estructura: D04, D05, D06**, con el puntaje de design §4.3 y la aplicación de mapeos.
+- [x] **T1.5 Estructura: D04, D05, D06**, con el puntaje de design §4.3 y la aplicación de mapeos.
   *Listo cuando:* pasan `test_d04_missing_required_column`, `test_d05_renamed_column_detected`, `test_d06_extra_column` y un test de que un mapeo aplicado deja D04/D05 en `resolved_by_mapping`.
-- [ ] **T1.6 Contenido: D07**, con severidad por columna y elevación por exceso de nulos.
+- [x] **T1.6 Contenido: D07**, con severidad por columna y elevación por exceso de nulos.
   *Listo cuando:* pasan `test_d07_text_in_hours_blocks`, `test_d07_bad_date` y un test de nulos sobre el umbral → BLOCKER.
-- [ ] **T1.7 Contenido: D08, D09, D10.**
+- [x] **T1.7 Contenido: D08, D09, D10.**
   *Listo cuando:* pasan `test_d08_duplicate_rows`, `test_d09_date_outside_period`, `test_d10_hours_out_of_range` y `test_d10_daily_total`, más un test de que una celda con D07 no se reevalúa (R5.9).
-- [ ] **T1.8 Contenido: D11, D12.**
+- [x] **T1.8 Contenido: D11, D12.**
   *Listo cuando:* pasan `test_d11_unknown_catalog_value` y `test_d12_unknown_inactive_or_unapproved`.
-- [ ] **T1.9 Disposición.** `decide()` con las reglas del YAML y la explicación numérica.
+- [x] **T1.9 Disposición.** `decide()` con las reglas del YAML y la explicación numérica.
   *Listo cuando:* pasan los tests de BLOCK, QUARANTINE, LOAD_WITH_WARNINGS y LOAD, el borde de exactamente 2 % → no es QUARANTINE, y D02 → QUARANTINE (R16.2).
-- [ ] **T1.10 Orquestación del motor.** `validate_batch()` completo y `test_clean_file_has_no_findings`.
+- [x] **T1.10 Orquestación del motor.** `validate_batch()` completo y `test_clean_file_has_no_findings`.
   *Listo cuando:* `pytest` está en verde y un test de determinismo corre dos veces el mismo lote y obtiene resultados idénticos (R7.6).
 
 ## Incremento 2 — Dataset sintético y evaluación (rama `feature/evaluacion`)
@@ -114,7 +114,7 @@ Cada pantalla cumple: estados cargando/vacío/error, 375/768/1280 px, hover y fo
 | Incremento | Estado |
 |---|---|
 | 0 Base verificada | **completo** |
-| 1 Motor | pendiente |
+| 1 Motor | **completo** (37 tests en verde, en rama feature/motor) |
 | 2 Evaluación | pendiente |
 | 3 API | pendiente |
 | 4 Pantallas | pendiente |
