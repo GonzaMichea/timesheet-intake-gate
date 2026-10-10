@@ -3,7 +3,7 @@ import json
 from pathlib import Path
 
 from fastapi import APIRouter, Depends, File, Form, UploadFile
-from fastapi.responses import JSONResponse
+from fastapi.responses import HTMLResponse, JSONResponse
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
@@ -16,6 +16,7 @@ from backend.app.schemas import (
 )
 from backend.app.services import actions, batches
 from backend.app.services import ai as ai_service
+from backend.app.services.report import build_report
 from backend.app.services.contract_store import current_bundle
 from backend.app.services.views import (
     ai_suggestions, batch_files, latest_ai, batch_summary, file_detail, file_summary, get_batch, get_file, iso, missing_columns_of,
@@ -85,6 +86,15 @@ def batch_audit(batch_id: str, db: Session = Depends(get_db)):
     return [AuditOut(id=str(a.id), created_at=iso(a.created_at), actor=a.actor, action=a.action,
                      entity_type=a.entity_type, entity_id=a.entity_id, before=a.before, after=a.after,
                      justification=a.justification) for a in rows]
+
+
+@router.get("/batches/{batch_id}/report", response_class=HTMLResponse)
+def batch_report(batch_id: str, inline: bool = False, db: Session = Depends(get_db)):
+    """HTML autocontenido. Por defecto se descarga; con ?inline=1 se abre en el navegador para imprimir a PDF."""
+    html = build_report(db, batch_id)
+    batch = get_batch(db, batch_id)
+    headers = {} if inline else {"Content-Disposition": f'attachment; filename="reporte-lote-{batch.period}.html"'}
+    return HTMLResponse(html, headers=headers)
 
 
 @router.get("/files/{file_id}", response_model=FileDetail)

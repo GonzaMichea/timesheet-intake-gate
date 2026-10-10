@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-10T15:52:30+00:00",
+  "generated_at": "2026-10-10T15:55:58+00:00",
   "summary": {
     "by_code": {
       "D01": {
@@ -79,7 +79,7 @@
     {
       "ai": null,
       "batch": "batch_00_clean",
-      "ms": 78.8,
+      "ms": 79.2,
       "files": 4,
       "wrong_dispositions": [],
       "d05_correct": 0,
@@ -90,7 +90,7 @@
     {
       "ai": null,
       "batch": "batch_01_old_template",
-      "ms": 53.7,
+      "ms": 55.2,
       "files": 4,
       "wrong_dispositions": [],
       "d05_correct": 2,
@@ -101,7 +101,7 @@
     {
       "ai": null,
       "batch": "batch_02_wrong_files",
-      "ms": 42.2,
+      "ms": 44.4,
       "files": 5,
       "wrong_dispositions": [],
       "d05_correct": 0,
@@ -112,7 +112,7 @@
     {
       "ai": null,
       "batch": "batch_03_approvals",
-      "ms": 75.7,
+      "ms": 76.1,
       "files": 4,
       "wrong_dispositions": [],
       "d05_correct": 0,
@@ -123,7 +123,7 @@
     {
       "ai": null,
       "batch": "batch_04_partial",
-      "ms": 29.5,
+      "ms": 30.7,
       "files": 5,
       "wrong_dispositions": [],
       "d05_correct": 1,
@@ -134,7 +134,7 @@
     {
       "ai": null,
       "batch": "batch_05_mixed",
-      "ms": 42.0,
+      "ms": 43.3,
       "files": 4,
       "wrong_dispositions": [],
       "d05_correct": 1,

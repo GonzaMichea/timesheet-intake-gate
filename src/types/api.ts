@@ -170,3 +170,25 @@ export type AuditEntry = {
   after: AuditSnapshot | null;
   justification: string | null;
 };
+
+export type EvaluationBatch = {
+  batch: string;
+  ms: number;
+  files: number;
+  wrong_dispositions: { file: string; expected: string | null; computed: string | null }[];
+};
+
+export type Evaluation = {
+  generated_at: string;
+  summary: {
+    by_code: Record<string, { expected: number; detected: number; false_positives: number }>;
+    detection: number | null;
+    false_positive_rate: number | null;
+    disposition_accuracy: number | null;
+    wrong_dispositions: number;
+    d05_precision: number | null;
+    ai: { precision: number | null; suggestions: number; correct: number; unavailable: string | null } | null;
+    units: { expected: number; detected: number; found: number };
+  };
+  batches: EvaluationBatch[];
+};

@@ -100,10 +100,10 @@ Cada pantalla cumple: estados cargando/vacío/error, 375/768/1280 px, hover y fo
 
 ## Incremento 6 — Reporte, métricas y cierre (rama `feature/reporte`)
 
-- [ ] **T6.1 Reporte HTML** autocontenido (R13.6), descargable desde el Resumen.
+- [x] **T6.1 Reporte HTML** autocontenido (R13.6), descargable desde el Resumen.
   *Listo cuando:* el archivo descargado se abre sin conexión y se imprime a PDF legible.
-- [ ] **T6.2 Pantalla Métricas** (R13.7) desde `/api/metrics`.
-- [ ] **T6.3 README**: problema, diagrama, frontera IA vs. código, control de incertidumbre, resultados de evaluación, limitaciones y el comando único `vercel dev`.
+- [x] **T6.2 Pantalla Métricas** (R13.7) desde `/api/metrics`.
+- [x] **T6.3 README**: problema, diagrama, frontera IA vs. código, control de incertidumbre, resultados de evaluación, limitaciones y el comando único `vercel dev`.
 - [ ] **T6.4 Verificación final.** Checklist CLAUDE.md §15 en producción, `pytest` en verde, `evaluate.py` con exit 0.
   *Listo cuando:* el usuario aprueba y se fusiona a `main`.
 
@@ -118,5 +118,5 @@ Cada pantalla cumple: estados cargando/vacío/error, 375/768/1280 px, hover y fo
 | 2 Evaluación | **completo** (66/66 unidades detectadas, 0 disposiciones incorrectas; 43 tests) |
 | 3 API | **completo** salvo la verificación de POST en Vercel, que se hace con la pantalla Nuevo lote (T4.2) |
 | 4 Pantallas | **completo** (Nuevo lote, Resumen, Detalle, Revisión, Auditoría, Historial) |
-| 5 IA | **casi completo** (72 tests; falta T5.4: cargar ANTHROPIC_API_KEY en Vercel y probar con el modelo real) |
-| 6 Cierre | pendiente |
+| 5 IA | **completo salvo T5.4** (clave real de Anthropic en Vercel; 72 tests con IA simulada) |
+| 6 Cierre | en curso (T6.1–T6.3 listas; T6.4 verificación final en producción) |

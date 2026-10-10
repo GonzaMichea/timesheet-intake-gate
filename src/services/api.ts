@@ -1,4 +1,4 @@
-import type { AiResult, ApiResult, AuditEntry, BatchListItem, BatchSummary, ContractInfo, Disposition, FileDetail, ReviewQueue } from "../types/api";
+import type { AiResult, ApiResult, AuditEntry, BatchListItem, BatchSummary, ContractInfo, Disposition, Evaluation, FileDetail, ReviewQueue } from "../types/api";
 
 const NETWORK_ERROR = "No se pudo conectar con el servicio de validación. Revisa tu conexión e inténtalo de nuevo.";
 
@@ -77,3 +77,10 @@ export function getAudit(batchId: string) {
 export function generateAi(fileId: string, kind: AiResult["kind"]) {
   return request<AiResult>(`/files/${encodeURIComponent(fileId)}/ai/${kind}`, { method: "POST" });
 }
+
+export function getMetrics() {
+  return request<Evaluation>("/metrics");
+}
+
+export const reportUrl = (batchId: string, inline: boolean) =>
+  `/api/batches/${encodeURIComponent(batchId)}/report${inline ? "?inline=1" : ""}`;
