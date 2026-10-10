@@ -1,0 +1,95 @@
+{
+  "batch": "batch_01_old_template",
+  "period": "2026-09",
+  "files": [
+    {
+      "file": "TS_SCL_202609.csv",
+      "site": "SCL",
+      "expected_disposition": "BLOCK"
+    },
+    {
+      "file": "MISSING:VAP",
+      "site": "VAP",
+      "expected_disposition": "BLOCK"
+    },
+    {
+      "file": "TS_CCP_202609.csv",
+      "site": "CCP",
+      "expected_disposition": "LOAD"
+    },
+    {
+      "file": "TS_ANF_202609.xlsx",
+      "site": "ANF",
+      "expected_disposition": "LOAD"
+    }
+  ],
+  "defects": [
+    {
+      "file": "MISSING:VAP",
+      "code": "D01",
+      "column": "",
+      "rows": []
+    },
+    {
+      "file": "TS_SCL_202609.csv",
+      "code": "D04",
+      "column": "cost_center",
+      "rows": []
+    },
+    {
+      "file": "TS_SCL_202609.csv",
+      "code": "D04",
+      "column": "overtime_hours",
+      "rows": []
+    },
+    {
+      "file": "TS_SCL_202609.csv",
+      "code": "D05",
+      "column": "Centro Costo",
+      "rows": []
+    },
+    {
+      "file": "TS_SCL_202609.csv",
+      "code": "D05",
+      "column": "Horas Extra",
+      "rows": []
+    },
+    {
+      "file": "TS_SCL_202609.csv",
+      "code": "D06",
+      "column": "Notas",
+      "rows": []
+    },
+    {
+      "file": "TS_SCL_202609.csv",
+      "code": "D08",
+      "column": "",
+      "rows": [
+        288,
+        289,
+        290
+      ]
+    },
+    {
+      "file": "TS_SCL_202609.csv",
+      "code": "D09",
+      "column": "work_date",
+      "rows": [
+        93,
+        178
+      ]
+    }
+  ],
+  "mappings": [
+    {
+      "file": "TS_SCL_202609.csv",
+      "column": "Horas Extra",
+      "target": "overtime_hours"
+    },
+    {
+      "file": "TS_SCL_202609.csv",
+      "column": "Centro Costo",
+      "target": "cost_center"
+    }
+  ]
+}

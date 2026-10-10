@@ -1,0 +1,139 @@
+{
+  "generated_at": "2026-10-10T15:14:11+00:00",
+  "summary": {
+    "by_code": {
+      "D01": {
+        "expected": 4,
+        "detected": 4,
+        "false_positives": 0
+      },
+      "D02": {
+        "expected": 2,
+        "detected": 2,
+        "false_positives": 0
+      },
+      "D03": {
+        "expected": 2,
+        "detected": 2,
+        "false_positives": 0
+      },
+      "D04": {
+        "expected": 5,
+        "detected": 5,
+        "false_positives": 0
+      },
+      "D05": {
+        "expected": 4,
+        "detected": 4,
+        "false_positives": 0
+      },
+      "D06": {
+        "expected": 3,
+        "detected": 3,
+        "false_positives": 0
+      },
+      "D07": {
+        "expected": 6,
+        "detected": 6,
+        "false_positives": 0
+      },
+      "D08": {
+        "expected": 5,
+        "detected": 5,
+        "false_positives": 0
+      },
+      "D09": {
+        "expected": 5,
+        "detected": 5,
+        "false_positives": 0
+      },
+      "D10": {
+        "expected": 7,
+        "detected": 7,
+        "false_positives": 0
+      },
+      "D11": {
+        "expected": 9,
+        "detected": 9,
+        "false_positives": 0
+      },
+      "D12": {
+        "expected": 14,
+        "detected": 14,
+        "false_positives": 0
+      }
+    },
+    "detection": 1.0,
+    "false_positive_rate": 0.0,
+    "disposition_accuracy": 1.0,
+    "wrong_dispositions": 0,
+    "d05_precision": 1.0,
+    "units": {
+      "expected": 66,
+      "detected": 66,
+      "found": 66
+    }
+  },
+  "batches": [
+    {
+      "batch": "batch_00_clean",
+      "ms": 95.6,
+      "files": 4,
+      "wrong_dispositions": [],
+      "d05_correct": 0,
+      "d05_total": 0,
+      "missed": [],
+      "false_positives": []
+    },
+    {
+      "batch": "batch_01_old_template",
+      "ms": 68.4,
+      "files": 4,
+      "wrong_dispositions": [],
+      "d05_correct": 2,
+      "d05_total": 2,
+      "missed": [],
+      "false_positives": []
+    },
+    {
+      "batch": "batch_02_wrong_files",
+      "ms": 49.7,
+      "files": 5,
+      "wrong_dispositions": [],
+      "d05_correct": 0,
+      "d05_total": 0,
+      "missed": [],
+      "false_positives": []
+    },
+    {
+      "batch": "batch_03_approvals",
+      "ms": 86.1,
+      "files": 4,
+      "wrong_dispositions": [],
+      "d05_correct": 0,
+      "d05_total": 0,
+      "missed": [],
+      "false_positives": []
+    },
+    {
+      "batch": "batch_04_partial",
+      "ms": 35.1,
+      "files": 5,
+      "wrong_dispositions": [],
+      "d05_correct": 1,
+      "d05_total": 1,
+      "missed": [],
+      "false_positives": []
+    },
+    {
+      "batch": "batch_05_mixed",
+      "ms": 45.9,
+      "files": 4,
+      "wrong_dispositions": [],
+      "d05_correct": 1,
+      "d05_total": 1,
+      "missed": [],
+      "false_positives": []
+    }
+  ]
+}

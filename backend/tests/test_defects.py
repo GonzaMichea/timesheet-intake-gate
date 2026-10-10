@@ -171,10 +171,10 @@ def test_d11_unknown_catalog_value():
 
 
 def test_d12_unknown_inactive_or_unapproved():
-    assert MASTER.employees["E10003"].active is False
+    assert MASTER.employees["E10014"].active is False
     rows = valid_rows()
     rows[0]["employee_id"] = "E99999"
-    rows[1]["employee_id"] = "E10003"
+    rows[1]["employee_id"] = "E10014"
     rows[2]["approved_by"] = ""
     e = run_scl(rows)
     assert find(e, "D12", rule_id="D12.unknown_employee")[0].affected_rows == [2]

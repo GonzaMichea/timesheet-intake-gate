@@ -1,0 +1,105 @@
+{
+  "batch": "batch_05_mixed",
+  "period": "2026-09",
+  "files": [
+    {
+      "file": "TS_SCL_202610.csv",
+      "site": "SCL",
+      "expected_disposition": "BLOCK"
+    },
+    {
+      "file": "TS_VAP_202609.csv",
+      "site": "VAP",
+      "expected_disposition": "BLOCK"
+    },
+    {
+      "file": "TS_CCP_202609.csv",
+      "site": "CCP",
+      "expected_disposition": "LOAD_WITH_WARNINGS"
+    },
+    {
+      "file": "TS_ANF_202609.xlsx",
+      "site": "ANF",
+      "expected_disposition": "BLOCK"
+    }
+  ],
+  "defects": [
+    {
+      "file": "TS_ANF_202609.xlsx",
+      "code": "D07",
+      "column": "overtime_hours",
+      "rows": [
+        191
+      ]
+    },
+    {
+      "file": "TS_ANF_202609.xlsx",
+      "code": "D09",
+      "column": "work_date",
+      "rows": [
+        75
+      ]
+    },
+    {
+      "file": "TS_ANF_202609.xlsx",
+      "code": "D12",
+      "column": "employee_id",
+      "rows": [
+        52,
+        207
+      ]
+    },
+    {
+      "file": "TS_CCP_202609.csv",
+      "code": "D11",
+      "column": "shift_code",
+      "rows": [
+        19,
+        45,
+        77,
+        116,
+        125
+      ]
+    },
+    {
+      "file": "TS_SCL_202610.csv",
+      "code": "D03",
+      "column": "",
+      "rows": []
+    },
+    {
+      "file": "TS_VAP_202609.csv",
+      "code": "D04",
+      "column": "employee_id",
+      "rows": []
+    },
+    {
+      "file": "TS_VAP_202609.csv",
+      "code": "D05",
+      "column": "Employee ID",
+      "rows": []
+    },
+    {
+      "file": "TS_VAP_202609.csv",
+      "code": "D06",
+      "column": "Obs",
+      "rows": []
+    },
+    {
+      "file": "TS_VAP_202609.csv",
+      "code": "D09",
+      "column": "work_date",
+      "rows": [
+        175,
+        201
+      ]
+    }
+  ],
+  "mappings": [
+    {
+      "file": "TS_VAP_202609.csv",
+      "column": "Employee ID",
+      "target": "employee_id"
+    }
+  ]
+}

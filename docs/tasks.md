@@ -47,13 +47,13 @@
 
 ## Incremento 2 — Dataset sintético y evaluación (rama `feature/evaluacion`)
 
-- [ ] **T2.1 Generador base.** `scripts/generate_dataset.py --seed 42`: maestro de 60 empleados y `batch_00_clean`.
+- [x] **T2.1 Generador base.** `scripts/generate_dataset.py --seed 42`: maestro de 60 empleados y `batch_00_clean`.
   *Listo cuando:* dos ejecuciones dan archivos idénticos byte a byte y el motor da 0 hallazgos y LOAD ×4.
-- [ ] **T2.2 Operaciones de siembra** y cálculo independiente de la disposición esperada.
+- [x] **T2.2 Operaciones de siembra** y cálculo independiente de la disposición esperada.
   *Listo cuando:* hay tests unitarios de cada operación que registran su unidad en el ground truth.
-- [ ] **T2.3 Lotes 01–05** según la tabla de design §10.
+- [x] **T2.3 Lotes 01–05** según la tabla de design §10.
   *Listo cuando:* cada código D01–D12 aparece en al menos 2 `ground_truth.json` (verificado por un test).
-- [ ] **T2.4 `scripts/evaluate.py`.** Métricas de R15.2, `reports/evaluation.md` y `.json`, y código de salida (R15.4).
+- [x] **T2.4 `scripts/evaluate.py`.** Métricas de R15.2, `reports/evaluation.md` y `.json`, y código de salida (R15.4).
   *Listo cuando:* corre sin IA y muestra **≥ 95 % de detección y 0 disposiciones incorrectas**. Si no, se corrige el motor o el generador (no el umbral) antes de seguir.
 
 ## Incremento 3 — Persistencia y API (rama `feature/api`)
@@ -115,7 +115,7 @@ Cada pantalla cumple: estados cargando/vacío/error, 375/768/1280 px, hover y fo
 |---|---|
 | 0 Base verificada | **completo** |
 | 1 Motor | **completo** (37 tests en verde, en rama feature/motor) |
-| 2 Evaluación | pendiente |
+| 2 Evaluación | **completo** (66/66 unidades detectadas, 0 disposiciones incorrectas; 43 tests) |
 | 3 API | pendiente |
 | 4 Pantallas | pendiente |
 | 5 IA | pendiente |

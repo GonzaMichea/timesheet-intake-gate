@@ -1,0 +1,28 @@
+{
+  "batch": "batch_00_clean",
+  "period": "2026-09",
+  "files": [
+    {
+      "file": "TS_SCL_202609.csv",
+      "site": "SCL",
+      "expected_disposition": "LOAD"
+    },
+    {
+      "file": "TS_VAP_202609.xlsx",
+      "site": "VAP",
+      "expected_disposition": "LOAD"
+    },
+    {
+      "file": "TS_CCP_202609.csv",
+      "site": "CCP",
+      "expected_disposition": "LOAD"
+    },
+    {
+      "file": "TS_ANF_202609.xlsx",
+      "site": "ANF",
+      "expected_disposition": "LOAD"
+    }
+  ],
+  "defects": [],
+  "mappings": []
+}
