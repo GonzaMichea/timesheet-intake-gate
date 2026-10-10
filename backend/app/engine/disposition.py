@@ -3,8 +3,20 @@ from backend.app.contract.loader import Contract
 from backend.app.engine.models import Disposition, Finding
 
 
+SEVERITY_WORD = {"BLOCKER": "bloqueante", "ERROR": "de error", "WARNING": "de advertencia"}
+
+
 def _pct_text(value: float) -> str:
     return f"{value * 100:.1f}".replace(".", ",")
+
+
+def _count_text(count: int, severity: str | None = None) -> str:
+    """'1 hallazgo bloqueante abierto' / '3 hallazgos bloqueantes abiertos'."""
+    word = SEVERITY_WORD.get(severity or "", "")
+    plural = count != 1
+    if plural and word == "bloqueante":
+        word += "s"
+    return " ".join(p for p in [f"{count} hallazgo{'s' if plural else ''}", word, f"abierto{'s' if plural else ''}"] if p)
 
 
 def _error_row_pct(open_findings: list[Finding], row_count: int, contract: Contract) -> float:
@@ -27,7 +39,7 @@ def decide(findings: list[Finding], row_count: int, contract: Contract) -> Dispo
             return Disposition(
                 value=rule.disposition,
                 rule_id=rule.id,
-                explanation=f"{len(open_findings)} hallazgo(s) abierto(s), sin superar el umbral de cuarentena",
+                explanation=f"{_count_text(len(open_findings))}; las filas con error no superan el umbral de cuarentena",
             )
         if when.severity and when.min_open:
             count = sum(1 for f in open_findings if f.severity == when.severity)
@@ -35,7 +47,7 @@ def decide(findings: list[Finding], row_count: int, contract: Contract) -> Dispo
                 return Disposition(
                     value=rule.disposition,
                     rule_id=rule.id,
-                    explanation=f"{count} hallazgo(s) {when.severity} abierto(s)",
+                    explanation=_count_text(count, when.severity),
                 )
         if when.severity and when.row_pct_gt:
             threshold = getattr(contract.thresholds, when.row_pct_gt)
@@ -46,6 +58,6 @@ def decide(findings: list[Finding], row_count: int, contract: Contract) -> Dispo
                 return Disposition(
                     value=rule.disposition,
                     rule_id=rule.id,
-                    explanation=f"{_pct_text(pct)} % de filas con {when.severity} > {_pct_text(threshold)} %",
+                    explanation=f"{_pct_text(pct)} % de las filas tiene errores; el umbral es {_pct_text(threshold)} %",
                 )
     raise ValueError("Las reglas de disposición del contrato no cubren todos los casos")

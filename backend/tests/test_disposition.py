@@ -14,7 +14,7 @@ def test_quarantine_above_threshold():
     rows[0]["shift_code"] = rows[1]["shift_code"] = "NOCHE"  # 2 de 50 = 4 %
     e = run_scl(rows)
     assert (e.disposition.value, e.disposition.rule_id) == ("QUARANTINE", "RULE_QUARANTINE")
-    assert e.disposition.explanation == "4,0 % de filas con ERROR > 2,0 %"
+    assert e.disposition.explanation == "4,0 % de las filas tiene errores; el umbral es 2,0 %"
 
 
 def test_exactly_at_threshold_is_not_quarantine():
@@ -33,3 +33,12 @@ def test_load_with_warnings_only_warnings():
 def test_load_without_findings():
     e = run_scl(valid_rows())
     assert (e.disposition.value, e.disposition.rule_id) == ("LOAD", "RULE_LOAD")
+
+
+def test_block_explanation_is_plain_spanish():
+    rows = valid_rows()
+    rows[0]["regular_hours"] = rows[1]["overtime_hours"] = "x"
+    assert run_scl(rows).disposition.explanation == "2 hallazgos bloqueantes abiertos"
+    rows = valid_rows()
+    rows[0]["regular_hours"] = "x"
+    assert run_scl(rows).disposition.explanation == "1 hallazgo bloqueante abierto"

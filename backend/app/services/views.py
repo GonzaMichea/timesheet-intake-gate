@@ -2,13 +2,14 @@
 import uuid
 from datetime import datetime, timezone
 
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from backend.app.db import models as m
 from backend.app.errors import ApiError
 from backend.app.schemas import (
-    BatchSummary, FileDetail, FileSummary, FindingOut, MappingReviewOut, OverrideOut, SeverityCounts,
+    BatchSummary, DefectBrief, FileDetail, FileSummary, FindingOut, MappingReviewOut, OverrideOut,
+    SeverityCounts,
 )
 from backend.app.services.contract_store import bundle_from_texts
 
@@ -72,7 +73,52 @@ def findings_of(db: Session, file_id) -> list[m.Finding]:
                            .order_by(m.Finding.ref)))
 
 
+SEVERITY_RANK = {"WARNING": 1, "ERROR": 2, "BLOCKER": 3}
+RIBBON_CHAR = {1: "W", 2: "E", 3: "B"}
+
+
+def _text(value) -> str | None:
+    if value is None:
+        return None
+    if isinstance(value, (list, tuple)):
+        return ", ".join(str(v) for v in value[:3])
+    return str(value)
+
+
+def defects_of(findings: list[m.Finding], descriptions: dict[str, str]) -> list[DefectBrief]:
+    """Agrupa los hallazgos abiertos por código, del más grave al menos grave."""
+    groups: dict[str, list[m.Finding]] = {}
+    for f in findings:
+        if f.status == "open":
+            groups.setdefault(f.code, []).append(f)
+    briefs = []
+    for code, items in groups.items():
+        first = items[0]
+        briefs.append(DefectBrief(
+            code=code, description=descriptions[code],
+            severity=max((f.severity for f in items), key=SEVERITY_RANK.__getitem__),
+            columns=list(dict.fromkeys(f.column_name for f in items if f.column_name)),
+            rows=len({r for f in items for r in f.affected_rows}),
+            found=_text(first.evidence.get("found")), expected=_text(first.evidence.get("expected")),
+        ))
+    return sorted(briefs, key=lambda b: (-SEVERITY_RANK[b.severity], b.code))
+
+
+def ribbon_of(findings: list[m.Finding], row_count: int) -> str:
+    """Cinta de filas: la severidad más alta de cada fila (numeración Excel: fila 2 = posición 0)."""
+    worst: dict[int, int] = {}
+    for f in findings:
+        if f.status == "open":
+            for row in f.affected_rows:
+                worst[row] = max(worst.get(row, 0), SEVERITY_RANK[f.severity])
+    length = max([row_count, *(row - 1 for row in worst)])
+    return "".join(RIBBON_CHAR.get(worst.get(i + 2, 0), ".") for i in range(length))
+
+
 def file_summary(db: Session, file: m.BatchFile) -> FileSummary:
+    batch = db.get(m.Batch, file.batch_id)
+    descriptions = bundle_from_texts(batch.contract_yaml, batch.master_csv).contract.code_descriptions
+    findings = findings_of(db, file.id)
     override = active_override(db, file.id)
     permissive = bool(override and RANK[override.disposition] < RANK[file.computed_disposition])
     changed = bool(override and override.computed_disposition
@@ -83,7 +129,8 @@ def file_summary(db: Session, file: m.BatchFile) -> FileSummary:
         final_disposition=override.disposition if override else file.computed_disposition,
         disposition_rule=file.disposition_rule, disposition_explanation=file.disposition_explanation,
         override_active=override is not None, permissive_override=permissive,
-        calculated_changed_after_override=changed, counts=counts_of(findings_of(db, file.id)),
+        calculated_changed_after_override=changed, counts=counts_of(findings),
+        defects=defects_of(findings, descriptions), ribbon=ribbon_of(findings, file.row_count or 0),
     )
 
 
@@ -92,8 +139,13 @@ def compute_ready(db: Session, batch_id) -> bool:
     return all(final_disposition(db, f) not in BLOCKING for f in files)
 
 
-def review_out(review: m.MappingReview, file: m.BatchFile) -> MappingReviewOut:
+def missing_columns_of(db: Session, file: m.BatchFile) -> list[str]:
+    return sorted({f.column_name for f in findings_of(db, file.id) if f.code == "D04" and f.status == "open"})
+
+
+def review_out(review: m.MappingReview, file: m.BatchFile, missing: list[str] | None = None) -> MappingReviewOut:
     return MappingReviewOut(
+        missing_columns=missing or [],
         id=str(review.id), file_id=str(file.id), filename=file.filename, site=file.site,
         source_column=review.source_column, candidate_column=review.candidate_column,
         candidate_score=float(review.candidate_score) if review.candidate_score is not None else None,
@@ -103,8 +155,11 @@ def review_out(review: m.MappingReview, file: m.BatchFile) -> MappingReviewOut:
 
 
 def batch_files(db: Session, batch_id) -> list[m.BatchFile]:
-    return list(db.scalars(select(m.BatchFile).where(m.BatchFile.batch_id == batch_id)
-                           .order_by(m.BatchFile.created_at, m.BatchFile.id)))
+    """Sedes en el orden del contrato; después, los archivos fuera de patrón por nombre."""
+    batch = db.get(m.Batch, batch_id)
+    sites = bundle_from_texts(batch.contract_yaml, batch.master_csv).contract.sites
+    files = db.scalars(select(m.BatchFile).where(m.BatchFile.batch_id == batch_id))
+    return sorted(files, key=lambda f: (sites.index(f.site) if f.site in sites else len(sites), f.filename or ""))
 
 
 def batch_summary(db: Session, batch: m.Batch) -> BatchSummary:
@@ -113,8 +168,11 @@ def batch_summary(db: Session, batch: m.Batch) -> BatchSummary:
     for entry in entries:
         for severity in ("BLOCKER", "ERROR", "WARNING"):
             setattr(totals, severity, getattr(totals, severity) + getattr(entry.counts, severity))
+    file_ids = [e.id for e in entries]
+    pending = db.scalar(select(func.count()).select_from(m.MappingReview).where(
+        m.MappingReview.file_id.in_([uuid.UUID(i) for i in file_ids]), m.MappingReview.status == "pending")) or 0
     return BatchSummary(
-        id=str(batch.id), period=batch.period, analyst_name=batch.analyst_name, created_at=iso(batch.created_at),
+        pending_reviews=pending, id=str(batch.id), period=batch.period, analyst_name=batch.analyst_name, created_at=iso(batch.created_at),
         processing_ms=batch.processing_ms, contract_hash=batch.contract_hash,
         ready_for_load=batch.ready_for_load, totals=totals, entries=entries,
     )
@@ -126,7 +184,7 @@ def file_detail(db: Session, file: m.BatchFile) -> FileDetail:
     findings = findings_of(db, file.id)
     reviews = db.scalars(select(m.MappingReview).where(m.MappingReview.file_id == file.id)
                          .order_by(m.MappingReview.source_column))
-    missing = sorted({f.column_name for f in findings if f.code == "D04" and f.status == "open"})
+    missing = missing_columns_of(db, file)
     return FileDetail(
         **file_summary(db, file).model_dump(), period=batch.period,
         findings=[FindingOut(

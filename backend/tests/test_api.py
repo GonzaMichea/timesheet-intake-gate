@@ -68,8 +68,9 @@ def test_batch_with_defects_blocks_and_queues_mappings(client):
     vap = next(e for e in batch["entries"] if e["site"] == "VAP")
     assert vap["kind"] == "missing" and vap["final_disposition"] == "BLOCK"
     queue = pending(client, batch["id"])
-    assert set(queue) == {"Horas Extra", "Centro Costo", "Notas"}
+    assert set(queue) == {"Horas Extra", "Centro Costo", "Notas"} and batch["pending_reviews"] == 3
     assert queue["Horas Extra"]["candidate_column"] == "overtime_hours" and queue["Notas"]["candidate_column"] is None
+    assert queue["Notas"]["missing_columns"] == ["cost_center", "overtime_hours"]  # destinos posibles
     assert client.get("/api/batches").json()[0]["id"] == batch["id"]
 
 
@@ -91,7 +92,7 @@ def test_accept_mapping_revalidates_recalculates_and_audits(client):
     audit = client.get(f"/api/batches/{batch['id']}/audit").json()
     assert [a["action"] for a in audit] == ["mapping_accepted", "mapping_accepted"]
     assert audit[1]["before"]["computed"] == "BLOCK" and audit[1]["after"]["computed"] == "LOAD_WITH_WARNINGS"
-    assert audit[0]["actor"] == "Ana Analista"
+    assert audit[0]["actor"] == "Ana Analista" and audit[0]["after"]["file"] == "SCL"
     again = client.post(f"/api/mappings/{queue['Horas Extra']['id']}/accept",
                         json={"actor": "x", "target_column": "overtime_hours"})
     assert again.status_code == 409
@@ -174,3 +175,26 @@ def test_not_found_and_metrics(client):
     assert client.get("/api/batches/00000000-0000-0000-0000-000000000000").json()["error"]["code"] == "lote_no_encontrado"
     assert client.get("/api/metrics").json()["summary"]["detection"] >= 0.95
     assert client.get("/api/contract").json()["sites"] == ["SCL", "VAP", "CCP", "ANF"]
+
+
+def test_summary_explains_why_each_file_has_its_disposition(client):
+    batch = create_old(client)
+    entry_scl = scl(client, batch)
+    codes = {d["code"]: d for d in entry_scl["defects"]}
+    assert entry_scl["defects"][0]["severity"] == "BLOCKER"  # lo más grave primero
+    assert codes["D04"]["columns"] == ["cost_center", "overtime_hours"]
+    assert codes["D08"]["rows"] == 3 and codes["D09"]["rows"] == 2
+    ribbon = entry_scl["ribbon"]
+    assert len(ribbon) == entry_scl["row_count"] and ribbon.count("E") == 5 and set(ribbon) == {".", "E"}
+    vap = next(e for e in batch["entries"] if e["site"] == "VAP")
+    assert vap["defects"][0]["code"] == "D01" and vap["defects"][0]["expected"] == "TS_VAP_202609.csv|.xlsx"
+    assert vap["ribbon"] == ""
+    ccp = next(e for e in batch["entries"] if e["site"] == "CCP")
+    assert ccp["defects"] == [] and set(ccp["ribbon"]) == {"."}
+
+
+def test_entries_follow_contract_site_order(client):
+    files = clean_files()
+    files["resumen.csv"] = b"x"
+    batch = post_batch(client, files).json()
+    assert [e["site"] for e in batch["entries"]] == ["SCL", "VAP", "CCP", "ANF", None]
