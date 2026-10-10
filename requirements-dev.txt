@@ -1,0 +1,4 @@
+# Solo para desarrollo y tests; no se despliega
+-r requirements.txt
+pytest==8.*
+httpx
