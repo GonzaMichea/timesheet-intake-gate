@@ -198,3 +198,23 @@ def test_entries_follow_contract_site_order(client):
     files["resumen.csv"] = b"x"
     batch = post_batch(client, files).json()
     assert [e["site"] for e in batch["entries"]] == ["SCL", "VAP", "CCP", "ANF", None]
+
+
+def test_report_is_self_contained_escaped_and_complete(client):
+    files = old_template_files()
+    files["<b>raro</b>.csv"] = b"x"
+    batch = post_batch(client, files).json()
+    file_id = scl(client, batch)["id"]
+    client.post(f"/api/files/{file_id}/override", json={
+        "actor": "Ana <script>", "disposition": "LOAD", "justification": "La sede reenviará el archivo corregido."})
+    response = client.get(f"/api/batches/{batch['id']}/report")
+    html = response.text
+    assert response.status_code == 200 and response.headers["content-type"].startswith("text/html")
+    assert "attachment" in response.headers["content-disposition"] and "reporte-lote-2026-09" in response.headers["content-disposition"]
+    assert "inline" not in client.get(f"/api/batches/{batch['id']}/report?inline=1").headers.get("content-disposition", "")
+    assert batch["contract_hash"] in html and "Período 2026-09" in html and "Lote no apto para carga" in html
+    assert "Override permisivo" in html and "La sede reenviará" in html and "Fijó una disposición" in html
+    assert "D04 Columna requerida faltante" in html and "SCL-001" in html
+    assert "&lt;b&gt;raro&lt;/b&gt;" in html and "<b>raro</b>" not in html and "Ana <script>" not in html  # todo escapado
+    assert "http://" not in html and "https://" not in html and "<link" not in html and "src=" not in html  # sin recursos externos
+    assert client.get("/api/batches/00000000-0000-0000-0000-000000000000/report").status_code == 404

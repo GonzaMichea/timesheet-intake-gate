@@ -17,3 +17,7 @@ export function isValidPeriod(period: string): boolean {
 export function expectedFileName(site: string, period: string): string {
   return `TS_${site}_${period.replace("-", "")}`;
 }
+
+export function formatPct(value: number | null): string {
+  return value === null ? "N/A" : `${(value * 100).toFixed(1).replace(".", ",")} %`;
+}

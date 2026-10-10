@@ -4,6 +4,7 @@ import AuditPage from "./pages/AuditPage";
 import BatchSummaryPage from "./pages/BatchSummaryPage";
 import FileDetailPage from "./pages/FileDetailPage";
 import HistoryPage from "./pages/HistoryPage";
+import MetricsPage from "./pages/MetricsPage";
 import NewBatchPage from "./pages/NewBatchPage";
 import ReviewPage from "./pages/ReviewPage";
 
@@ -12,6 +13,7 @@ export default function App() {
     <Routes>
       <Route element={<AppShell />}>
         <Route index element={<NewBatchPage />} />
+        <Route path="metricas" element={<MetricsPage />} />
         <Route path="lotes" element={<HistoryPage />} />
         <Route path="lotes/:batchId" element={<BatchSummaryPage />} />
         <Route path="lotes/:batchId/revision" element={<ReviewPage />} />
