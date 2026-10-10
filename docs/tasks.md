@@ -116,7 +116,7 @@ Cada pantalla cumple: estados cargando/vacío/error, 375/768/1280 px, hover y fo
 | 0 Base verificada | **completo** |
 | 1 Motor | **completo** (37 tests en verde, en rama feature/motor) |
 | 2 Evaluación | **completo** (66/66 unidades detectadas, 0 disposiciones incorrectas; 43 tests) |
-| 3 API | en curso (T3.1–T3.5 listas, 57 tests; falta T3.6 verificar en Vercel con la migración 002) |
+| 3 API | **completo** salvo la verificación de POST en Vercel, que se hace con la pantalla Nuevo lote (T4.2) |
 | 4 Pantallas | pendiente |
 | 5 IA | pendiente |
 | 6 Cierre | pendiente |
