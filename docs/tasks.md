@@ -15,9 +15,9 @@
   *Listo cuando:* el repositorio muestra el commit inicial.
 - [x] **T0.3 Esqueleto frontend.** Vite + React + TypeScript + Tailwind 3 en la raíz. Fuentes Archivo e IBM Plex Sans, tokens de color y escala tipográfica en `tailwind.config.js` (design §9). Una página "Timesheet Intake Gate" que llama a `/api/health` y muestra el resultado.
   *Listo cuando:* `npm run build` termina sin errores.
-- [ ] **T0.4 Spike de la función Python.** `api/index.py` con FastAPI y `GET /api/health`, que importa pandas y openpyxl y devuelve sus versiones. `requirements.txt`, `vercel.json` (design §11).
+- [x] **T0.4 Spike de la función Python.** `api/index.py` con FastAPI y `GET /api/health`, que importa pandas y openpyxl y devuelve sus versiones. `requirements.txt`, `vercel.json` (design §11).
   *Listo cuando:* `vercel dev` responde `/api/health` en local.
-- [ ] **T0.5 🧑 Vercel.** El usuario importa el repositorio en Vercel y carga `LLM_MODEL` (las demás variables, después).
+- [x] **T0.5 🧑 Vercel.** El usuario importa el repositorio en Vercel y carga `LLM_MODEL` (las demás variables, después).
   *Listo cuando:* la URL de producción muestra la página y `/api/health` responde con las versiones de pandas. **Si el build falla por tamaño → se aplica el plan B de design §11 y se avisa al usuario.**
 - [ ] **T0.6 🧑 Supabase.** El usuario crea el proyecto. Se escribe `supabase/migrations/001_create_core_tables.sql` (7 tablas, RLS, rol `tig_api`, trigger de solo inserción). El usuario lo ejecuta en el SQL Editor, le asigna la contraseña a `tig_api` y carga `DATABASE_URL` (pooler 6543) en `.env.local` y en Vercel.
   *Listo cuando:* `/api/health` informa `db: ok` en la URL de Vercel, y una consulta con la clave anon a cualquier tabla devuelve vacío o error de permisos.
@@ -113,7 +113,7 @@ Cada pantalla cumple: estados cargando/vacío/error, 375/768/1280 px, hover y fo
 
 | Incremento | Estado |
 |---|---|
-| 0 Base verificada | en curso (T0.1–T0.3 listas) |
+| 0 Base verificada | en curso (T0.1–T0.5 listas; falta T0.6 Supabase) |
 | 1 Motor | pendiente |
 | 2 Evaluación | pendiente |
 | 3 API | pendiente |
