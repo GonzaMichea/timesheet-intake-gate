@@ -34,3 +34,24 @@ def check_database() -> str:
         return "ok"
     except Exception:
         return "error"
+
+
+_engine: Engine | None = None
+
+
+def get_engine() -> Engine:
+    global _engine
+    if _engine is None:
+        url = get_database_url()
+        if url is None:
+            raise RuntimeError("DATABASE_URL no está configurada")
+        _engine = make_engine(url)
+    return _engine
+
+
+def get_db():
+    """Dependencia de FastAPI: una sesión por request."""
+    from sqlalchemy.orm import Session
+
+    with Session(get_engine(), expire_on_commit=False) as session:
+        yield session

@@ -20,9 +20,14 @@ def _finding(contract: Contract, filename: str, code: str, rule_id: str, evidenc
     )
 
 
-def _entry(kind, filename, site, findings, contract, row_count=0, headers=None, prefix="") -> FileResult:
+def assign_refs(findings: list[Finding], prefix: str) -> None:
+    """Códigos legibles y reproducibles: SCL-001, SCL-002, ... (D-09)."""
     for number, finding in enumerate(findings, start=1):
         finding.ref = f"{prefix}-{number:03d}"
+
+
+def _entry(kind, filename, site, findings, contract, row_count=0, headers=None, prefix="") -> FileResult:
+    assign_refs(findings, prefix)
     return FileResult(
         kind=kind, filename=filename, site=site, row_count=row_count, headers=headers or [],
         findings=findings, disposition=decide(findings, row_count, contract),

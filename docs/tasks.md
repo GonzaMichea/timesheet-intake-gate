@@ -58,15 +58,15 @@
 
 ## Incremento 3 — Persistencia y API (rama `feature/api`)
 
-- [ ] **T3.1 Modelos SQLAlchemy y sesión** (Postgres con pooler / SQLite en tests).
+- [x] **T3.1 Modelos SQLAlchemy y sesión** (Postgres con pooler / SQLite en tests).
   *Listo cuando:* pasa `test_migration_matches_models`.
-- [ ] **T3.2 `POST /api/batches`, `GET /api/batches`, `GET /api/batches/{id}`.** Guardan la copia del contrato, los archivos, los hallazgos y los tiempos.
+- [x] **T3.2 `POST /api/batches`, `GET /api/batches`, `GET /api/batches/{id}`.** Guardan la copia del contrato, los archivos, los hallazgos y los tiempos.
   *Listo cuando:* hay tests de API con período inválido → 400 en español, sin archivos → 400, y un lote válido → resumen correcto.
-- [ ] **T3.3 `GET /api/files/{id}`, `/api/contract`, `/api/batches/{id}/audit`.**
+- [x] **T3.3 `GET /api/files/{id}`, `/api/contract`, `/api/batches/{id}/audit`.**
   *Listo cuando:* hay tests de API.
-- [ ] **T3.4 Mapeos: aceptar/rechazar** con revalidación transaccional y auditoría.
+- [x] **T3.4 Mapeos: aceptar/rechazar** con revalidación transaccional y auditoría.
   *Listo cuando:* pasan los tests de aceptar → disposición recalculada + entrada de auditoría, y de rechazar → hallazgos abiertos.
-- [ ] **T3.5 Overrides: crear/retirar** con aviso de "Override permisivo" y "calculada cambió".
+- [x] **T3.5 Overrides: crear/retirar** con aviso de "Override permisivo" y "calculada cambió".
   *Listo cuando:* pasan los tests de override sin justificación → 400, override permisivo marcado y cada acción con su auditoría.
 - [ ] **T3.6 Verificación en Vercel.** Crear un lote real desde la URL de preview (con `curl` o un formulario mínimo).
   *Listo cuando:* el lote aparece en Supabase y `/api/batches/{id}` responde desde la preview.
@@ -116,7 +116,7 @@ Cada pantalla cumple: estados cargando/vacío/error, 375/768/1280 px, hover y fo
 | 0 Base verificada | **completo** |
 | 1 Motor | **completo** (37 tests en verde, en rama feature/motor) |
 | 2 Evaluación | **completo** (66/66 unidades detectadas, 0 disposiciones incorrectas; 43 tests) |
-| 3 API | pendiente |
+| 3 API | **completo** salvo la verificación de POST en Vercel, que se hace con la pantalla Nuevo lote (T4.2) |
 | 4 Pantallas | pendiente |
 | 5 IA | pendiente |
 | 6 Cierre | pendiente |

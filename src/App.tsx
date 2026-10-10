@@ -59,8 +59,6 @@ export default function App() {
             </dd>
             <dt className="text-graphite">Python</dt>
             <dd>{health.python}</dd>
-            <dt className="text-graphite">pandas</dt>
-            <dd>{health.pandas}</dd>
             <dt className="text-graphite">openpyxl</dt>
             <dd>{health.openpyxl}</dd>
           </dl>

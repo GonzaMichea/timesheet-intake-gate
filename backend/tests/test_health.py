@@ -9,7 +9,7 @@ def test_health_reports_versions(monkeypatch):
     assert response.status_code == 200
     body = response.json()
     assert body["status"] == "ok"
-    assert body["pandas"]
+    assert body["openpyxl"]
     assert body["db"] == "no_configurada"
 
 
