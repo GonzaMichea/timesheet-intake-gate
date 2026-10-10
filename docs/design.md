@@ -285,9 +285,8 @@ conteos por severidad). Todo ocurre en una sola transacción.
 
 - Usa el SDK oficial `anthropic`, con el modelo `os.environ["LLM_MODEL"]`, el timeout `ai_timeout_s` y sin
   reintentos.
-- Para obtener JSON estructurado se usa **tool use forzado**: una herramienta cuyo `input_schema` es el
-  JSON Schema del modelo pydantic de salida, con `tool_choice` apuntando a esa herramienta. La respuesta
-  se valida con `Model.model_validate(...)`. Si falla, el estado queda `invalido` (R11.4).
+- Para obtener JSON estructurado se usa **salida estructurada** (`output_config.format` con un esquema JSON). Los
+  modelos actuales rechazan `tool_choice` forzado. La respuesta se valida con `Model.model_validate(...)`. Si falla, el estado queda `invalido` (R11.4).
   *(Los detalles del SDK se verifican contra la versión instalada al implementar.)*
 - Si no hay `ANTHROPIC_API_KEY`, la función devuelve `no_disponible` sin hacer la llamada (R12.1).
 
@@ -451,7 +450,7 @@ al usuario del cambio.
 | D-04 | Archivos en `bytea`, no en Storage | ≤ 4 MB por lote; una sola conexión y una sola transacción al revalidar |
 | D-05 | Rol `tig_api` con políticas explícitas, sin service_role | Mínimo privilegio y auditoría inalterable por permisos |
 | D-06 | IA por requests separados, sin tareas en segundo plano | Las funciones de Vercel terminan al responder |
-| D-07 | Tool use forzado + pydantic para el JSON de la IA | Es la forma más simple de obtener JSON estructurado y validable |
+| D-07 | Salida estructurada (`output_config.format` con esquema JSON) + validación pydantic para el JSON de la IA | Los modelos actuales rechazan `tool_choice` forzado (400); la salida estructurada garantiza JSON y pydantic valida rangos y contenido |
 | D-08 | Overrides y auditoría solo de inserción | Historial completo sin columnas que se editen |
 | D-09 | Hallazgos con `ref` legible (`SCL-007`) | La IA y el analista los citan sin UUIDs |
 | D-10 | Al revalidar, los resultados IA del archivo quedan obsoletos | Citaban refs anteriores |

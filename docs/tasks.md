@@ -86,16 +86,16 @@ Cada pantalla cumple: estados cargando/vacío/error, 375/768/1280 px, hover y fo
 
 ## Incremento 5 — Asistencia IA (rama `feature/ia`)
 
-- [ ] **T5.1 Cliente y payload.** `ai/client.py` (tool use forzado, timeout, sin clave → `no_disponible`) y `build_payload` con ≤ 5 filas.
+- [x] **T5.1 Cliente y payload.** `ai/client.py` (tool use forzado, timeout, sin clave → `no_disponible`) y `build_payload` con ≤ 5 filas.
   *Listo cuando:* pasan el test de límite del payload y el de sin clave → `no_disponible` sin llamada de red.
-- [ ] **T5.2 Esquemas y guardas** (design §7.3–7.4).
+- [x] **T5.2 Esquemas y guardas** (design §7.3–7.4).
   *Listo cuando:* hay tests con IA simulada de ref inexistente → descartada, sin refs → "Sin respaldo", confianza 0,5 → `needs_review`, y destino inválido → descartado.
-- [ ] **T5.3 Endpoint `POST /api/files/{id}/ai/{kind}`** y obsolescencia al revalidar.
+- [x] **T5.3 Endpoint `POST /api/files/{id}/ai/{kind}`** y obsolescencia al revalidar.
   *Listo cuando:* pasan `test_app_works_without_ai` (R16.3), `test_ai_failure_or_invalid_json` (R16.4) y un test de que las disposiciones no cambian tras llamar a la IA (R16.5).
 - [ ] **T5.4 🧑 Clave en Vercel.** El usuario carga `ANTHROPIC_API_KEY` en Vercel.
   *Listo cuando:* en la preview, un archivo de `batch_01` muestra la sugerencia "Horas Extra → overtime_hours" con confianza.
-- [ ] **T5.5 UI de IA** en el Detalle y la Cola: "Generando…", etiqueta "IA – no vinculante", "Requiere revisión humana", botón "Copiar mensaje".
-- [ ] **T5.6 `evaluate.py --with-ai`**: precisión de los mapeos IA.
+- [x] **T5.5 UI de IA** en el Detalle y la Cola: "Generando…", etiqueta "IA – no vinculante", "Requiere revisión humana", botón "Copiar mensaje".
+- [x] **T5.6 `evaluate.py --with-ai`**: precisión de los mapeos IA.
   *Listo cuando:* la tabla incluye la fila de precisión IA.
 
 ## Incremento 6 — Reporte, métricas y cierre (rama `feature/reporte`)
@@ -118,5 +118,5 @@ Cada pantalla cumple: estados cargando/vacío/error, 375/768/1280 px, hover y fo
 | 2 Evaluación | **completo** (66/66 unidades detectadas, 0 disposiciones incorrectas; 43 tests) |
 | 3 API | **completo** salvo la verificación de POST en Vercel, que se hace con la pantalla Nuevo lote (T4.2) |
 | 4 Pantallas | **completo** (Nuevo lote, Resumen, Detalle, Revisión, Auditoría, Historial) |
-| 5 IA | pendiente |
+| 5 IA | **casi completo** (72 tests; falta T5.4: cargar ANTHROPIC_API_KEY en Vercel y probar con el modelo real) |
 | 6 Cierre | pendiente |

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import BatchTabs from "../components/BatchTabs";
 import FileOverrideRow from "../components/FileOverrideRow";
@@ -6,11 +6,18 @@ import MappingReviewItem from "../components/MappingReviewItem";
 import { useAnalyst } from "../context/AnalystContext";
 import { useDocumentTitle } from "../hooks/useDocumentTitle";
 import { DISPOSITIONS } from "../lib/disposition";
-import { acceptMapping, createOverride, getReviewQueue, rejectMapping, withdrawOverride } from "../services/api";
+import { acceptMapping, createOverride, generateAi, getReviewQueue, rejectMapping, withdrawOverride } from "../services/api";
 import type { ApiResult, Disposition, FileDetail, FileSummary, MappingReview, ReviewQueue } from "../types/api";
 
 const focus =
   "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-stamp";
+
+function AiNote({ loading, status }: { loading: boolean; status: ReviewQueue["ai_mapping"][string] | undefined }) {
+  if (loading) return <p role="status" className="mt-1 text-sm text-graphite">Generando sugerencias de IA…</p>;
+  if (status && status.status !== "ok")
+    return <p className="mt-1 text-sm text-graphite">Sugerencias de IA no disponibles: {status.reason}</p>;
+  return null;
+}
 
 function groupBySite(reviews: MappingReview[]): [string, MappingReview[]][] {
   const groups = new Map<string, MappingReview[]>();
@@ -29,6 +36,8 @@ export default function ReviewPage() {
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
   const [busyId, setBusyId] = useState<string | null>(null);
+  const [aiLoading, setAiLoading] = useState<Set<string>>(new Set());
+  const aiRequested = useRef<Set<string>>(new Set());
 
   const load = useCallback(async () => {
     const { data, error } = await getReviewQueue(batchId);
@@ -39,6 +48,25 @@ export default function ReviewPage() {
   useEffect(() => {
     load();
   }, [load]);
+
+  // Pide las sugerencias de IA de los archivos con columnas pendientes que aún no las tienen (un request por archivo)
+  useEffect(() => {
+    if (!queue) return;
+    const files = new Set(queue.pending.map((r) => r.file_id));
+    for (const fileId of files) {
+      if (queue.ai_mapping[fileId] !== null || aiRequested.current.has(fileId)) continue;
+      aiRequested.current.add(fileId);
+      setAiLoading((current) => new Set(current).add(fileId));
+      generateAi(fileId, "mapping").then(async () => {
+        await load();
+        setAiLoading((current) => {
+          const next = new Set(current);
+          next.delete(fileId);
+          return next;
+        });
+      });
+    }
+  }, [queue, load]);
 
   const label = (value: Disposition) => DISPOSITIONS[value].label;
   const transition = (before: FileSummary | undefined, after: FileDetail) =>
@@ -114,6 +142,7 @@ export default function ReviewPage() {
           groupBySite(queue.pending).map(([site, reviews]) => (
             <div key={site} className="mt-6">
               <h3 className="font-display text-lg font-bold">{site}</h3>
+              <AiNote loading={aiLoading.has(reviews[0].file_id)} status={queue.ai_mapping[reviews[0].file_id]} />
               <ul>
                 {reviews.map((review) => (
                   <MappingReviewItem key={review.id} review={review} busy={busyId === review.id}

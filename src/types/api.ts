@@ -51,6 +51,29 @@ export type Finding = {
   status: "open" | "resolved_by_mapping";
 };
 
+export type AiStatus = "ok" | "no_disponible" | "invalido";
+
+export type AiSuggestion = {
+  target_column: string;
+  confidence: number;
+  justification: string;
+  needs_review: boolean;
+};
+
+export type AiStatement = { text: string; finding_refs: string[]; confidence: number; needs_review: boolean; unsupported: boolean };
+export type AiRemediation = { subject: string; body: string; finding_refs: string[]; confidence: number; needs_review: boolean; unsupported: boolean };
+
+export type AiResult = {
+  id: string;
+  kind: "mapping" | "cause" | "remediation";
+  status: AiStatus;
+  model: string | null;
+  latency_ms: number | null;
+  reason: string | null;
+  payload: Record<string, unknown> | null;
+  created_at: string;
+};
+
 export type MappingReview = {
   id: string;
   file_id: string;
@@ -64,9 +87,14 @@ export type MappingReview = {
   decided_by: string | null;
   decided_at: string | null;
   missing_columns: string[];
+  ai_suggestion: AiSuggestion | null;
 };
 
-export type ReviewQueue = { pending: MappingReview[]; files: FileSummary[] };
+export type ReviewQueue = {
+  pending: MappingReview[];
+  files: FileSummary[];
+  ai_mapping: Record<string, { status: AiStatus; reason: string | null } | null>;
+};
 
 export type OverrideEntry = {
   id: string;
@@ -84,7 +112,7 @@ export type FileDetail = FileSummary & {
   overrides: OverrideEntry[];
   missing_columns: string[];
   required_columns: string[];
-  ai: Record<string, unknown>;
+  ai: Partial<Record<AiResult["kind"], AiResult>>;
 };
 
 export type BatchSummary = {

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import type { MappingReview } from "../types/api";
+import { ReviewBadge } from "./AiBlock";
 
 const focus =
   "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-stamp";
@@ -31,7 +32,28 @@ export default function MappingReviewItem({ review, busy, onAccept, onReject }: 
                 .replace(".", ",")}).`
             : "El sistema no encontró una columna requerida parecida."}
         </p>
-        <p className="mt-1 text-sm text-graphite">
+        {review.ai_suggestion && (
+          <div className="mt-3 border-l-2 border-graphite pl-3 text-sm">
+            <p>
+              <span className="font-semibold">IA – no vinculante:</span> sugiere{" "}
+              <span className="font-semibold tabular-nums">{review.ai_suggestion.target_column}</span> (confianza{" "}
+              {review.ai_suggestion.confidence.toFixed(2).replace(".", ",")}).
+            </p>
+            <p className="mt-1 text-graphite">{review.ai_suggestion.justification}</p>
+            {review.ai_suggestion.needs_review && <p className="mt-1"><ReviewBadge /></p>}
+            {options.includes(review.ai_suggestion.target_column) && (
+              <button
+                type="button"
+                disabled={busy}
+                onClick={() => setTarget(review.ai_suggestion!.target_column)}
+                className={`mt-2 font-semibold underline underline-offset-4 ${focus}`}
+              >
+                Elegir esta sugerencia
+              </button>
+            )}
+          </div>
+        )}
+        <p className="mt-2 text-sm text-graphite">
           {options.length
             ? `Faltan en el archivo: ${options.join(", ")}.`
             : "El archivo ya tiene todas las columnas requeridas: esta columna solo puede rechazarse."}

@@ -29,6 +29,24 @@ class OverrideOut(BaseModel):
     computed_disposition: str | None
 
 
+class AiSuggestionOut(BaseModel):
+    target_column: str
+    confidence: float
+    justification: str
+    needs_review: bool
+
+
+class AiResultOut(BaseModel):
+    id: str
+    kind: str
+    status: str  # ok | no_disponible | invalido
+    model: str | None
+    latency_ms: int | None
+    reason: str | None
+    payload: dict[str, Any] | None
+    created_at: str
+
+
 class MappingReviewOut(BaseModel):
     id: str
     file_id: str
@@ -42,6 +60,7 @@ class MappingReviewOut(BaseModel):
     decided_by: str | None
     decided_at: str | None
     missing_columns: list[str] = []  # destinos posibles: columnas requeridas que faltan en el archivo
+    ai_suggestion: AiSuggestionOut | None = None
 
 
 class SeverityCounts(BaseModel):
@@ -87,7 +106,7 @@ class FileDetail(FileSummary):
     overrides: list[OverrideOut]
     missing_columns: list[str]
     required_columns: list[str]
-    ai: dict[str, Any] = {}
+    ai: dict[str, AiResultOut] = {}
 
 
 class BatchListItem(BaseModel):
@@ -115,6 +134,8 @@ class BatchSummary(BaseModel):
 class ReviewQueue(BaseModel):
     pending: list[MappingReviewOut]
     files: list[FileSummary]
+    # Por archivo: estado de las sugerencias de IA de mapeo, o null si todavía no se pidieron
+    ai_mapping: dict[str, dict[str, Any] | None] = {}
 
 
 class AuditOut(BaseModel):

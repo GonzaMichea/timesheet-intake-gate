@@ -14,6 +14,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
+from backend.app.ai import assist  # noqa: E402
 from backend.app.contract.loader import load_contract, load_master  # noqa: E402
 from backend.app.engine.batch import validate_batch  # noqa: E402
 from backend.app.engine.models import InputFile  # noqa: E402
@@ -42,7 +43,7 @@ def truth_units(truth) -> set[tuple]:
     return {(d["file"], d["code"], d["column"], row) for d in truth["defects"] for row in d["rows"] or [0]}
 
 
-def evaluate_batch(folder: Path, contract, master) -> dict:
+def evaluate_batch(folder: Path, contract, master, with_ai: bool = False) -> dict:
     truth = json.loads((folder / "ground_truth.json").read_text(encoding="utf-8"))
     files = [InputFile(name=p.name, content=p.read_bytes())
              for p in sorted(folder.iterdir()) if p.name != "ground_truth.json"]
@@ -60,13 +61,34 @@ def evaluate_batch(folder: Path, contract, master) -> dict:
     targets = {(m["file"], m["column"]): m["target"] for m in truth["mappings"]}
     candidates = [(e.filename, f.column, f.evidence.get("candidate"))
                   for e in result.entries for f in e.findings if f.code == "D05" and f.status == "open"]
+    ai = ai_mappings(result, folder, truth, contract, master, targets) if with_ai else None
     return {
-        "batch": truth["batch"], "ms": elapsed_ms, "expected": expected, "found": found,
+        "ai": ai, "batch": truth["batch"], "ms": elapsed_ms, "expected": expected, "found": found,
         "files": len(truth["files"]), "wrong_dispositions": wrong,
         "d05_correct": sum(1 for f, c, cand in candidates if targets.get((f, c)) == cand),
         "d05_total": len(candidates),
         "missed": sorted(expected - found), "false_positives": sorted(found - expected),
     }
+
+
+def ai_mappings(result, folder: Path, truth, contract, master, targets) -> dict:
+    """Pide a la IA sugerencias de mapeo para cada archivo con columnas desconocidas y las compara con el ground truth."""
+    correct = total = ms = 0
+    unavailable = None
+    for entry in result.entries:
+        if entry.kind != "site_file" or not any(f.code in ("D05", "D06") for f in entry.findings):
+            continue
+        started = time.perf_counter()
+        outcome = assist.run("mapping", entry.filename, entry.site, (folder / entry.filename).read_bytes(),
+                             truth["period"], contract, master, {})
+        ms += round((time.perf_counter() - started) * 1000)
+        if outcome.status != "ok":
+            unavailable = outcome.reason
+            continue
+        for suggestion in outcome.payload["suggestions"]:  # ya sin destinos inválidos ni "ninguna"
+            total += 1
+            correct += targets.get((entry.filename, suggestion["source_column"])) == suggestion["target_column"]
+    return {"correct": correct, "total": total, "ms": ms, "unavailable": unavailable}
 
 
 def rate(part, whole):
@@ -75,6 +97,16 @@ def rate(part, whole):
 
 def pct(value) -> str:
     return "N/A" if value is None else f"{value * 100:.1f} %"
+
+
+def ai_summary(results) -> dict | None:
+    runs = [r["ai"] for r in results if r.get("ai")]
+    if not runs:
+        return None
+    total = sum(r["total"] for r in runs)
+    return {"precision": rate(sum(r["correct"] for r in runs), total), "suggestions": total,
+            "correct": sum(r["correct"] for r in runs), "ms": sum(r["ms"] for r in runs),
+            "unavailable": next((r["unavailable"] for r in runs if r["unavailable"]), None)}
 
 
 def summarize(results) -> dict:
@@ -97,6 +129,7 @@ def summarize(results) -> dict:
         "disposition_accuracy": rate(files_total - wrong, files_total),
         "wrong_dispositions": wrong,
         "d05_precision": rate(sum(r["d05_correct"] for r in results), d05_total),
+        "ai": ai_summary(results),
         "units": {"expected": expected_total, "detected": detected_total, "found": found_total},
     }
 
@@ -109,16 +142,23 @@ def markdown(results, summary, with_ai) -> str:
     for code, c in summary["by_code"].items():
         lines.append(f"| {code} | {c['expected']} | {c['detected']} | {pct(rate(c['detected'], c['expected']))} "
                      f"| {c['false_positives']} |")
-    ai = "N/A (se mide con `--with-ai`; la IA se integra en el incremento 5)"
+    ai = "N/A (se mide con `--with-ai`)"
+    ai_info = summary["ai"]
+    if with_ai and ai_info:
+        reason = f" ({ai_info['unavailable']})" if ai_info["unavailable"] else ""
+        ai = (f"{pct(ai_info['precision'])} ({ai_info['correct']} de {ai_info['suggestions']}){reason}"
+              if ai_info["suggestions"] else f"N/A{reason or ' (la IA no hizo sugerencias)'}")
     lines += ["", "## Resumen", "", "| Métrica | Resultado |", "|---|---:|",
               f"| Detección global | {pct(summary['detection'])} ({summary['units']['detected']} de {summary['units']['expected']}) |",
               f"| Tasa de falsos positivos | {pct(summary['false_positive_rate'])} |",
               f"| Exactitud de disposición | {pct(summary['disposition_accuracy'])} |",
               f"| Disposiciones incorrectas | {summary['wrong_dispositions']} |",
               f"| Precisión de candidatas D05 (determinística) | {pct(summary['d05_precision'])} |",
-              f"| Precisión de mapeos sugeridos por IA | {ai if not with_ai else 'N/A'} |",
+              f"| Precisión de mapeos sugeridos por IA | {ai} |",
               "", "## Tiempo por lote (motor determinístico)", "", "| Lote | Archivos | Tiempo |", "|---|---:|---:|"]
     lines += [f"| {r['batch']} | {r['files']} | {r['ms']} ms |" for r in results]
+    if with_ai and ai_info:
+        lines += ["", f"Tiempo de las llamadas a la IA (aparte, no cuenta en el tiempo determinístico): {ai_info['ms']} ms en total."]
     problems = [r for r in results if r["missed"] or r["false_positives"] or r["wrong_dispositions"]]
     if problems:
         lines += ["", "## Diferencias contra el ground truth", ""]
@@ -141,7 +181,7 @@ def main() -> int:
     if not folders:
         print("No hay lotes. Ejecuta primero: python scripts/generate_dataset.py")
         return 2
-    results = [evaluate_batch(folder, contract, master) for folder in folders]
+    results = [evaluate_batch(folder, contract, master, args.with_ai) for folder in folders]
     summary = summarize(results)
     text = markdown(results, summary, args.with_ai)
     print(text)

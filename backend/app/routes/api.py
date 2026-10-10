@@ -11,13 +11,14 @@ from backend.app.db import models as m
 from backend.app.db.session import get_db
 from backend.app.errors import ApiError
 from backend.app.schemas import (
-    AcceptMapping, Actor, AuditOut, BatchListItem, BatchSummary, FileDetail, OverrideIn, ReviewQueue,
+    AcceptMapping, Actor, AiResultOut, AuditOut, BatchListItem, BatchSummary, FileDetail, OverrideIn, ReviewQueue,
     WithdrawIn,
 )
 from backend.app.services import actions, batches
+from backend.app.services import ai as ai_service
 from backend.app.services.contract_store import current_bundle
 from backend.app.services.views import (
-    batch_files, batch_summary, file_detail, file_summary, get_batch, get_file, iso, missing_columns_of,
+    ai_suggestions, batch_files, latest_ai, batch_summary, file_detail, file_summary, get_batch, get_file, iso, missing_columns_of,
     review_out,
 )
 
@@ -67,8 +68,13 @@ def review_queue(batch_id: str, db: Session = Depends(get_db)):
     pending = db.scalars(select(m.MappingReview).where(m.MappingReview.file_id.in_(by_id), m.MappingReview.status == "pending")
                          .order_by(m.MappingReview.created_at, m.MappingReview.source_column)).all()
     missing = {f.id: missing_columns_of(db, f) for f in files}
-    return ReviewQueue(pending=[review_out(r, by_id[r.file_id], missing[r.file_id]) for r in pending],
-                       files=[file_summary(db, f) for f in files])
+    suggestions = {f.id: ai_suggestions(db, f.id) for f in files}
+    ai_mapping = {}
+    for f in files:
+        latest = latest_ai(db, f.id).get("mapping")
+        ai_mapping[str(f.id)] = {"status": latest.status, "reason": latest.reason} if latest else None
+    return ReviewQueue(pending=[review_out(r, by_id[r.file_id], missing[r.file_id], suggestions[r.file_id]) for r in pending],
+                       files=[file_summary(db, f) for f in files], ai_mapping=ai_mapping)
 
 
 @router.get("/batches/{batch_id}/audit", response_model=list[AuditOut])
@@ -84,6 +90,13 @@ def batch_audit(batch_id: str, db: Session = Depends(get_db)):
 @router.get("/files/{file_id}", response_model=FileDetail)
 def get_file_detail(file_id: str, db: Session = Depends(get_db)):
     return file_detail(db, get_file(db, file_id))
+
+
+@router.post("/files/{file_id}/ai/{kind}", response_model=AiResultOut)
+def generate_ai(file_id: str, kind: str, db: Session = Depends(get_db)):
+    """Un request por tipo de asistencia: las funciones de Vercel no siguen corriendo después de responder."""
+    result = ai_service.generate(db, file_id, kind)
+    return file_detail(db, get_file(db, file_id)).ai[result.kind]
 
 
 @router.post("/mappings/{review_id}/accept", response_model=FileDetail)
