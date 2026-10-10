@@ -1,12 +1,8 @@
-import type { DefectBrief, FileSummary, Severity } from "../types/api";
+import { Link } from "react-router-dom";
+import { SEVERITY } from "../lib/severity";
+import type { DefectBrief, FileSummary } from "../types/api";
 import DispositionSeal from "./DispositionSeal";
 import RowRibbon from "./RowRibbon";
-
-const SEVERITY: Record<Severity, { label: string; text: string }> = {
-  BLOCKER: { label: "Bloqueante", text: "text-block" },
-  ERROR: { label: "Error", text: "text-quarantine" },
-  WARNING: { label: "Advertencia", text: "text-warn" },
-};
 
 // Qué columnas o filas explican el defecto; en defectos de archivo, lo encontrado frente a lo esperado
 function defectDetail(defect: DefectBrief): string {
@@ -50,6 +46,15 @@ export default function SiteRow({ entry }: { entry: FileSummary }) {
           </p>
         )}
       </div>
+
+      {entry.defects.length > 0 && (
+        <Link
+          to={`/lotes/${entry.batch_id}/archivos/${entry.id}`}
+          className="mt-5 inline-block text-sm font-semibold underline underline-offset-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-stamp"
+        >
+          Ver hallazgos en detalle
+        </Link>
+      )}
 
       {entry.defects.length === 0 ? (
         <p className="mt-4 text-sm text-graphite">Sin hallazgos: el archivo cumple el contrato.</p>

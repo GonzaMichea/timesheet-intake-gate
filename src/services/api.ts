@@ -1,4 +1,4 @@
-import type { ApiResult, BatchSummary, ContractInfo } from "../types/api";
+import type { ApiResult, BatchSummary, ContractInfo, FileDetail } from "../types/api";
 
 const NETWORK_ERROR = "No se pudo conectar con el servicio de validación. Revisa tu conexión e inténtalo de nuevo.";
 
@@ -24,6 +24,10 @@ export function getContract() {
 
 export function getBatch(batchId: string) {
   return request<BatchSummary>(`/batches/${encodeURIComponent(batchId)}`);
+}
+
+export function getFile(fileId: string) {
+  return request<FileDetail>(`/files/${encodeURIComponent(fileId)}`);
 }
 
 export function createBatch(period: string, actor: string, files: File[]) {

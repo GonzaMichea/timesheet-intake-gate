@@ -78,7 +78,7 @@ Cada pantalla cumple: estados cargando/vacío/error, 375/768/1280 px, hover y fo
 - [x] **T4.1 Layout y navegación.** Router, barra superior del acta, `AnalystContext` (pide el nombre), `services/api.ts`, `useDocumentTitle`, tipos en `src/types/api.ts`.
 - [x] **T4.2 Nuevo lote** (R13.1): período, arrastrar/elegir archivos o `.zip`, botón "Validar lote".
 - [x] **T4.3 Resumen del lote** (R13.2): veredicto "Apto / No apto para carga", renglón por sede con sello de disposición, **cinta de filas** y conteos, tiempo de procesamiento.
-- [ ] **T4.4 Detalle de archivo** (R13.3): tabla de hallazgos filtrable, evidencia, filas de ejemplo, disposición calculada vs. final y su regla. Las secciones IA quedan en "No disponible" por ahora.
+- [x] **T4.4 Detalle de archivo** (R13.3): tabla de hallazgos filtrable, evidencia, filas de ejemplo, disposición calculada vs. final y su regla. Las secciones IA quedan en "No disponible" por ahora.
 - [ ] **T4.5 Cola de revisión** (R13.4): aceptar/rechazar mapeos (o elegir otro destino) y formulario de override.
 - [ ] **T4.6 Auditoría e Historial** (R13.5, R13.8).
 
@@ -117,6 +117,6 @@ Cada pantalla cumple: estados cargando/vacío/error, 375/768/1280 px, hover y fo
 | 1 Motor | **completo** (37 tests en verde, en rama feature/motor) |
 | 2 Evaluación | **completo** (66/66 unidades detectadas, 0 disposiciones incorrectas; 43 tests) |
 | 3 API | **completo** salvo la verificación de POST en Vercel, que se hace con la pantalla Nuevo lote (T4.2) |
-| 4 Pantallas | en curso (T4.1–T4.3 listas; siguiente T4.4 Detalle de archivo) |
+| 4 Pantallas | en curso (T4.1–T4.4 listas; siguiente T4.5 Cola de revisión) |
 | 5 IA | pendiente |
 | 6 Cierre | pendiente |

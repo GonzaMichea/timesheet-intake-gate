@@ -35,6 +35,55 @@ export type FileSummary = {
   ribbon: string;
 };
 
+export type Finding = {
+  id: string;
+  ref: string;
+  code: string;
+  code_description: string;
+  severity: Severity;
+  column: string | null;
+  rule_id: string;
+  rule_text: string;
+  affected_count: number;
+  affected_rows: number[];
+  sample_rows: Record<string, unknown>[];
+  evidence: Record<string, unknown>;
+  status: "open" | "resolved_by_mapping";
+};
+
+export type MappingReview = {
+  id: string;
+  file_id: string;
+  filename: string | null;
+  site: string | null;
+  source_column: string;
+  candidate_column: string | null;
+  candidate_score: number | null;
+  status: "pending" | "accepted" | "rejected";
+  chosen_column: string | null;
+  decided_by: string | null;
+  decided_at: string | null;
+};
+
+export type OverrideEntry = {
+  id: string;
+  disposition: Disposition | null;
+  justification: string;
+  actor: string;
+  created_at: string;
+  computed_disposition: Disposition | null;
+};
+
+export type FileDetail = FileSummary & {
+  period: string;
+  findings: Finding[];
+  mappings: MappingReview[];
+  overrides: OverrideEntry[];
+  missing_columns: string[];
+  required_columns: string[];
+  ai: Record<string, unknown>;
+};
+
 export type BatchSummary = {
   id: string;
   period: string;

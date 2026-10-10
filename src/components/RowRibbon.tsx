@@ -30,7 +30,21 @@ function describe(ribbon: string): string {
   return `Cinta de ${ribbon.length} filas: ${detail}.`;
 }
 
-export default function RowRibbon({ ribbon }: { ribbon: string }) {
+// Fila marcada más cercana al punto donde se hizo clic (con tolerancia de unos 8 px)
+function nearestFlagged(ribbon: string, clickX: number, width: number): number | null {
+  const center = Math.min(ribbon.length - 1, Math.max(0, Math.floor((clickX / width) * ribbon.length)));
+  const reach = Math.ceil(8 / (width / ribbon.length));
+  for (let distance = 0; distance <= reach; distance++) {
+    for (const index of [center - distance, center + distance]) {
+      if (index >= 0 && index < ribbon.length && ribbon[index] !== ".") return index;
+    }
+  }
+  return null;
+}
+
+type Props = { ribbon: string; onPick?: (row: number) => void };
+
+export default function RowRibbon({ ribbon, onPick }: Props) {
   if (ribbon === "") {
     return (
       <div className="flex items-center gap-3">
@@ -40,7 +54,17 @@ export default function RowRibbon({ ribbon }: { ribbon: string }) {
     );
   }
   return (
-    <div role="img" aria-label={describe(ribbon)} className="flex h-3 w-full animate-ribbon motion-reduce:animate-none">
+    <div
+      role="img"
+      aria-label={describe(ribbon)}
+      onClick={(event) => {
+        if (!onPick) return;
+        const box = event.currentTarget.getBoundingClientRect();
+        const index = nearestFlagged(ribbon, event.clientX - box.left, box.width);
+        if (index !== null) onPick(index + 2);
+      }}
+      className={`flex h-3 w-full animate-ribbon motion-reduce:animate-none ${onPick ? "cursor-pointer" : ""}`}
+    >
       {toRuns(ribbon).map((run, index) => (
         <span
           key={index}
