@@ -32,9 +32,9 @@
 
 | Lote | Archivos | Tiempo |
 |---|---:|---:|
-| batch_00_clean | 4 | 80.4 ms |
-| batch_01_old_template | 4 | 52.8 ms |
-| batch_02_wrong_files | 5 | 44.5 ms |
-| batch_03_approvals | 4 | 78.4 ms |
-| batch_04_partial | 5 | 30.9 ms |
-| batch_05_mixed | 4 | 42.2 ms |
+| batch_00_clean | 4 | 77.5 ms |
+| batch_01_old_template | 4 | 50.6 ms |
+| batch_02_wrong_files | 5 | 42.3 ms |
+| batch_03_approvals | 4 | 73.7 ms |
+| batch_04_partial | 5 | 28.4 ms |
+| batch_05_mixed | 4 | 40.0 ms |

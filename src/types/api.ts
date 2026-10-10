@@ -5,6 +5,16 @@ export type Severity = "BLOCKER" | "ERROR" | "WARNING";
 
 export type SeverityCounts = Record<Severity, number>;
 
+export type DefectBrief = {
+  code: string;
+  description: string;
+  severity: Severity;
+  columns: string[];
+  rows: number;
+  found: string | null;
+  expected: string | null;
+};
+
 export type FileSummary = {
   id: string;
   batch_id: string;
@@ -20,6 +30,9 @@ export type FileSummary = {
   permissive_override: boolean;
   calculated_changed_after_override: boolean;
   counts: SeverityCounts;
+  defects: DefectBrief[];
+  // Un carácter por fila: "." sin hallazgos, W advertencia, E error, B bloqueante
+  ribbon: string;
 };
 
 export type BatchSummary = {

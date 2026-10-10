@@ -16,6 +16,14 @@ export default {
       sans: ['"IBM Plex Sans"', "sans-serif"],
     },
     extend: {
+      // Único movimiento orquestado de la app: la cinta de filas se llena de izquierda a derecha
+      keyframes: {
+        "ribbon-fill": {
+          from: { clipPath: "inset(0 100% 0 0)" },
+          to: { clipPath: "inset(0 0 0 0)" },
+        },
+      },
+      animation: { ribbon: "ribbon-fill 900ms ease-out both" },
       colors: {
         paper: "#F3F5F4",
         surface: "#FFFFFF",

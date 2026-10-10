@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-10T15:26:52+00:00",
+  "generated_at": "2026-10-10T15:34:25+00:00",
   "summary": {
     "by_code": {
       "D01": {
@@ -77,7 +77,7 @@
   "batches": [
     {
       "batch": "batch_00_clean",
-      "ms": 80.4,
+      "ms": 77.5,
       "files": 4,
       "wrong_dispositions": [],
       "d05_correct": 0,
@@ -87,7 +87,7 @@
     },
     {
       "batch": "batch_01_old_template",
-      "ms": 52.8,
+      "ms": 50.6,
       "files": 4,
       "wrong_dispositions": [],
       "d05_correct": 2,
@@ -97,7 +97,7 @@
     },
     {
       "batch": "batch_02_wrong_files",
-      "ms": 44.5,
+      "ms": 42.3,
       "files": 5,
       "wrong_dispositions": [],
       "d05_correct": 0,
@@ -107,7 +107,7 @@
     },
     {
       "batch": "batch_03_approvals",
-      "ms": 78.4,
+      "ms": 73.7,
       "files": 4,
       "wrong_dispositions": [],
       "d05_correct": 0,
@@ -117,7 +117,7 @@
     },
     {
       "batch": "batch_04_partial",
-      "ms": 30.9,
+      "ms": 28.4,
       "files": 5,
       "wrong_dispositions": [],
       "d05_correct": 1,
@@ -127,7 +127,7 @@
     },
     {
       "batch": "batch_05_mixed",
-      "ms": 42.2,
+      "ms": 40.0,
       "files": 4,
       "wrong_dispositions": [],
       "d05_correct": 1,

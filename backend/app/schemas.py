@@ -49,6 +49,17 @@ class SeverityCounts(BaseModel):
     WARNING: int = 0
 
 
+class DefectBrief(BaseModel):
+    """Un código de defecto abierto en el archivo, resumido para explicar la disposición."""
+    code: str
+    description: str
+    severity: str
+    columns: list[str]
+    rows: int
+    found: str | None
+    expected: str | None
+
+
 class FileSummary(BaseModel):
     id: str
     batch_id: str
@@ -64,6 +75,8 @@ class FileSummary(BaseModel):
     permissive_override: bool
     calculated_changed_after_override: bool
     counts: SeverityCounts
+    defects: list[DefectBrief]
+    ribbon: str  # un carácter por fila: "." sin hallazgos, W advertencia, E error, B bloqueante
 
 
 class FileDetail(FileSummary):
