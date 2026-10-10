@@ -1,0 +1,103 @@
+# Contrato de validación: única fuente de reglas, severidades y umbrales (R1.4)
+version: 1
+sites: [SCL, VAP, CCP, ANF]
+# Solo la extensión ignora mayúsculas (R3.1)
+file_name_pattern: '^TS_(?P<site>[A-Z]{3})_(?P<yyyymm>\d{6})\.(?i:csv|xlsx)$'
+date_formats: ['%Y-%m-%d', '%d-%m-%Y', '%d/%m/%Y']
+
+columns:
+  employee_id:    { type: str, pattern: '^E\d{5}$' }
+  employee_name:  { type: str }
+  site:           { type: str }
+  cost_center:    { type: str }
+  work_date:      { type: date }
+  shift_code:     { type: catalog, catalog: shift_code }
+  regular_hours:  { type: decimal, min: 0, max: 12, d07_severity: BLOCKER }
+  overtime_hours: { type: decimal, min: 0, max: 4, d07_severity: BLOCKER }
+  absence_code:   { type: catalog, catalog: absence_code, nullable: true }
+  approved_by:    { type: str, approval: true }
+  approval_date:  { type: date, approval: true }
+
+catalogs:
+  shift_code: [DAY, NIGHT, SWING]
+  absence_code: [VAC, SICK, PERM]
+
+# Alias usados por el puntaje de equivalencia de columnas (D05)
+aliases:
+  employee_id: [id empleado, id_empleado, codigo empleado, legajo]
+  employee_name: [nombre, nombre empleado, nombre_empleado, empleado]
+  site: [sede, sucursal, planta]
+  cost_center: [centro costo, centro de costo, cc, ceco]
+  work_date: [fecha, fecha trabajo, fecha de trabajo, dia]
+  shift_code: [turno, codigo turno, shift]
+  regular_hours: [horas, horas normales, horas regulares, hh normales, regular]
+  overtime_hours: [horas extra, horas extras, hh extra, overtime, ot]
+  absence_code: [ausencia, codigo ausencia, tipo ausencia, absence]
+  approved_by: [aprobado por, aprobador, supervisor, approver]
+  approval_date: [fecha aprobacion, fecha de aprobacion, fecha aprobado]
+
+thresholds:
+  max_null_pct: 0.05
+  max_daily_total: 14
+  quarantine_error_row_pct: 0.02
+  d05_min_score: 0.6
+  ai_min_confidence: 0.7
+  ai_timeout_s: 30
+  max_upload_mb: 4
+
+severities:
+  D01: BLOCKER
+  D02: ERROR
+  D03: BLOCKER
+  D04: BLOCKER
+  D05: WARNING
+  D06: WARNING
+  D07: ERROR
+  D08: ERROR
+  D09: ERROR
+  D10: ERROR
+  D11: ERROR
+  D12: ERROR
+
+# Defectos de archivo completo: cuentan como 100 % de filas afectadas
+file_level_full_impact: [D02]
+
+# Reglas de disposición: se evalúan en orden y gana la primera que se cumple (R7.1)
+disposition_rules:
+  - { id: RULE_BLOCK, disposition: BLOCK, when: { severity: BLOCKER, min_open: 1 } }
+  - { id: RULE_QUARANTINE, disposition: QUARANTINE, when: { severity: ERROR, row_pct_gt: quarantine_error_row_pct } }
+  - { id: RULE_WARN, disposition: LOAD_WITH_WARNINGS, when: { any_open: true } }
+  - { id: RULE_LOAD, disposition: LOAD, when: { always: true } }
+
+code_descriptions:
+  D01: Archivo esperado faltante
+  D02: Archivo inesperado o nombre fuera de patrón
+  D03: El período del nombre no coincide con el período seleccionado
+  D04: Columna requerida faltante
+  D05: Columna renombrada (posible equivalencia con una requerida)
+  D06: Columna extra no especificada
+  D07: Tipo de dato inválido
+  D08: Filas duplicadas (empleado y fecha)
+  D09: Fecha de trabajo fuera del período
+  D10: Horas fuera de rango o total diario excedido
+  D11: Valor de catálogo desconocido
+  D12: Empleado inexistente o inactivo, o fila sin aprobación
+
+rule_texts:
+  D01.missing_file: Debe existir un archivo por cada sede esperada
+  D02.bad_name: El nombre debe calzar con TS_{SEDE}_{YYYYMM}.csv o .xlsx de una sede esperada
+  D02.duplicate_site: Solo puede haber un archivo por sede
+  D03.period_mismatch: El período del nombre debe coincidir con el período seleccionado
+  D04.missing_column: Toda columna requerida debe estar presente
+  D05.renamed_column: Una columna desconocida parece equivaler a una requerida faltante
+  D06.extra_column: Las columnas no especificadas no se cargan a nómina
+  D07.invalid_type: El valor debe cumplir el tipo declarado de la columna
+  D08.duplicate_key: Cada combinación empleado + fecha debe aparecer una sola vez
+  D09.date_out_of_period: work_date debe pertenecer al período seleccionado
+  D10.regular_range: regular_hours debe estar dentro de su rango permitido
+  D10.overtime_range: overtime_hours debe estar dentro de su rango permitido
+  D10.daily_total: regular_hours + overtime_hours no puede superar el total diario máximo
+  D11.unknown_catalog: El valor debe pertenecer al catálogo de la columna
+  D12.unknown_employee: employee_id debe existir en el maestro de empleados
+  D12.inactive_employee: El empleado debe estar activo en el maestro
+  D12.missing_approval: La fila debe tener aprobador y fecha de aprobación

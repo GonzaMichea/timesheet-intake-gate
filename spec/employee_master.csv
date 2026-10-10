@@ -1,0 +1,10 @@
+employee_id,site,active
+E10001,SCL,true
+E10002,SCL,true
+E10003,SCL,false
+E20001,VAP,true
+E20002,VAP,true
+E30001,CCP,true
+E30002,CCP,true
+E40001,ANF,true
+E40002,ANF,true

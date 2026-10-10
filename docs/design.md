@@ -457,3 +457,5 @@ al usuario del cambio.
 | D-10 | Al revalidar, los resultados IA del archivo quedan obsoletos | Citaban refs anteriores |
 | D-11 | `datasets/` se versiona | El jurado puede reproducir sin correr el generador; la seed lo reconstruye igual |
 | D-12 | Tipos TS escritos a mano, sin generador OpenAPI | Menos piezas para un MVP de 3 sábados |
+| D-13 | El motor lee archivos con `csv` + `openpyxl` y valida sobre listas de dicts, sin pandas | Es el "plan B" del §11 aplicado de entrada: funcion más liviana en Vercel y menos riesgo; 2.000 filas por archivo no necesitan vectorización |
+| D-14 | Si el contrato define D07 sin `d07_severity`, la severidad por defecto de la columna es ERROR | Solo las columnas de horas son BLOCKER en el contrato inicial |
