@@ -9,11 +9,11 @@
 
 ## Incremento 0 — Base verificada
 
-- [ ] **T0.1 Repositorio.** `git init`, `.gitignore` (`.env`, `.env.local`, `node_modules`, `__pycache__`, `.venv`, `dist`, `.vercel`), primer commit con `docs/` y `CLAUDE.md`.
+- [x] **T0.1 Repositorio.** `git init`, `.gitignore` (`.env`, `.env.local`, `node_modules`, `__pycache__`, `.venv`, `dist`, `.vercel`), primer commit con `docs/` y `CLAUDE.md`.
   *Listo cuando:* `git status` está limpio y `.env.local` no aparece.
-- [ ] **T0.2 🧑 GitHub.** El usuario crea el repositorio (indica si es público o privado). Push de `main`.
+- [x] **T0.2 🧑 GitHub.** El usuario crea el repositorio (indica si es público o privado). Push de `main`.
   *Listo cuando:* el repositorio muestra el commit inicial.
-- [ ] **T0.3 Esqueleto frontend.** Vite + React + TypeScript + Tailwind 3 en la raíz. Fuentes Archivo e IBM Plex Sans, tokens de color y escala tipográfica en `tailwind.config.js` (design §9). Una página "Timesheet Intake Gate" que llama a `/api/health` y muestra el resultado.
+- [x] **T0.3 Esqueleto frontend.** Vite + React + TypeScript + Tailwind 3 en la raíz. Fuentes Archivo e IBM Plex Sans, tokens de color y escala tipográfica en `tailwind.config.js` (design §9). Una página "Timesheet Intake Gate" que llama a `/api/health` y muestra el resultado.
   *Listo cuando:* `npm run build` termina sin errores.
 - [ ] **T0.4 Spike de la función Python.** `api/index.py` con FastAPI y `GET /api/health`, que importa pandas y openpyxl y devuelve sus versiones. `requirements.txt`, `vercel.json` (design §11).
   *Listo cuando:* `vercel dev` responde `/api/health` en local.
@@ -113,7 +113,7 @@ Cada pantalla cumple: estados cargando/vacío/error, 375/768/1280 px, hover y fo
 
 | Incremento | Estado |
 |---|---|
-| 0 Base verificada | pendiente |
+| 0 Base verificada | en curso (T0.1–T0.3 listas) |
 | 1 Motor | pendiente |
 | 2 Evaluación | pendiente |
 | 3 API | pendiente |
