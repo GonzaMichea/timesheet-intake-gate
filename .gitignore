@@ -19,3 +19,11 @@ __pycache__/
 # Editor / SO
 .DS_Store
 Thumbs.db
+
+# Logs y archivos locales de la plantilla Vite
+*.log
+dist-ssr/
+*.local
+.vscode/*
+!.vscode/extensions.json
+.idea/
