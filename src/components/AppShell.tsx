@@ -1,4 +1,4 @@
-import { FilePlus2, UserRound } from "lucide-react";
+import { FilePlus2, History, UserRound } from "lucide-react";
 import { NavLink, Outlet } from "react-router-dom";
 import { useAnalyst } from "../context/AnalystContext";
 import AnalystDialog from "./AnalystDialog";
@@ -17,7 +17,7 @@ export default function AppShell() {
             <NavLink to="/" className={`font-display text-base font-extrabold tracking-wide ${focus} focus-visible:outline-paper`}>
               Timesheet Intake Gate
             </NavLink>
-            <nav aria-label="Principal">
+            <nav aria-label="Principal" className="flex gap-6">
               <NavLink
                 to="/"
                 end
@@ -29,6 +29,17 @@ export default function AppShell() {
               >
                 <FilePlus2 size={16} aria-hidden="true" />
                 Nuevo lote
+              </NavLink>
+              <NavLink
+                to="/lotes"
+                className={({ isActive }) =>
+                  `inline-flex items-center gap-2 border-b-2 py-1 text-sm font-medium ${focus} focus-visible:outline-paper ${
+                    isActive ? "border-paper" : "border-transparent text-paper/80 hover:text-paper"
+                  }`
+                }
+              >
+                <History size={16} aria-hidden="true" />
+                Historial
               </NavLink>
             </nav>
           </div>

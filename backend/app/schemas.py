@@ -41,6 +41,7 @@ class MappingReviewOut(BaseModel):
     chosen_column: str | None
     decided_by: str | None
     decided_at: str | None
+    missing_columns: list[str] = []  # destinos posibles: columnas requeridas que faltan en el archivo
 
 
 class SeverityCounts(BaseModel):
@@ -107,6 +108,7 @@ class BatchSummary(BaseModel):
     contract_hash: str
     ready_for_load: bool
     totals: SeverityCounts
+    pending_reviews: int = 0
     entries: list[FileSummary]
 
 

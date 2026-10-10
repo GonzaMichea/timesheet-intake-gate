@@ -1,4 +1,4 @@
-import type { ApiResult, BatchSummary, ContractInfo, FileDetail } from "../types/api";
+import type { ApiResult, AuditEntry, BatchListItem, BatchSummary, ContractInfo, Disposition, FileDetail, ReviewQueue } from "../types/api";
 
 const NETWORK_ERROR = "No se pudo conectar con el servicio de validación. Revisa tu conexión e inténtalo de nuevo.";
 
@@ -36,4 +36,40 @@ export function createBatch(period: string, actor: string, files: File[]) {
   form.append("actor", actor);
   files.forEach((file) => form.append("files", file));
   return request<BatchSummary>("/batches", { method: "POST", body: form });
+}
+
+export function getReviewQueue(batchId: string) {
+  return request<ReviewQueue>(`/batches/${encodeURIComponent(batchId)}/review`);
+}
+
+function post<T>(path: string, body: unknown) {
+  return request<T>(path, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  });
+}
+
+export function acceptMapping(reviewId: string, actor: string, targetColumn: string) {
+  return post<FileDetail>(`/mappings/${reviewId}/accept`, { actor, target_column: targetColumn });
+}
+
+export function rejectMapping(reviewId: string, actor: string) {
+  return post<FileDetail>(`/mappings/${reviewId}/reject`, { actor });
+}
+
+export function createOverride(fileId: string, actor: string, disposition: Disposition, justification: string) {
+  return post<FileDetail>(`/files/${fileId}/override`, { actor, disposition, justification });
+}
+
+export function withdrawOverride(fileId: string, actor: string, justification: string) {
+  return post<FileDetail>(`/files/${fileId}/override/withdraw`, { actor, justification });
+}
+
+export function getBatches() {
+  return request<BatchListItem[]>("/batches");
+}
+
+export function getAudit(batchId: string) {
+  return request<AuditEntry[]>(`/batches/${encodeURIComponent(batchId)}/audit`);
 }

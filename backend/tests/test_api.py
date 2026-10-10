@@ -68,8 +68,9 @@ def test_batch_with_defects_blocks_and_queues_mappings(client):
     vap = next(e for e in batch["entries"] if e["site"] == "VAP")
     assert vap["kind"] == "missing" and vap["final_disposition"] == "BLOCK"
     queue = pending(client, batch["id"])
-    assert set(queue) == {"Horas Extra", "Centro Costo", "Notas"}
+    assert set(queue) == {"Horas Extra", "Centro Costo", "Notas"} and batch["pending_reviews"] == 3
     assert queue["Horas Extra"]["candidate_column"] == "overtime_hours" and queue["Notas"]["candidate_column"] is None
+    assert queue["Notas"]["missing_columns"] == ["cost_center", "overtime_hours"]  # destinos posibles
     assert client.get("/api/batches").json()[0]["id"] == batch["id"]
 
 
@@ -91,7 +92,7 @@ def test_accept_mapping_revalidates_recalculates_and_audits(client):
     audit = client.get(f"/api/batches/{batch['id']}/audit").json()
     assert [a["action"] for a in audit] == ["mapping_accepted", "mapping_accepted"]
     assert audit[1]["before"]["computed"] == "BLOCK" and audit[1]["after"]["computed"] == "LOAD_WITH_WARNINGS"
-    assert audit[0]["actor"] == "Ana Analista"
+    assert audit[0]["actor"] == "Ana Analista" and audit[0]["after"]["file"] == "SCL"
     again = client.post(f"/api/mappings/{queue['Horas Extra']['id']}/accept",
                         json={"actor": "x", "target_column": "overtime_hours"})
     assert again.status_code == 409

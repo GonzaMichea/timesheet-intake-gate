@@ -63,7 +63,10 @@ export type MappingReview = {
   chosen_column: string | null;
   decided_by: string | null;
   decided_at: string | null;
+  missing_columns: string[];
 };
+
+export type ReviewQueue = { pending: MappingReview[]; files: FileSummary[] };
 
 export type OverrideEntry = {
   id: string;
@@ -93,6 +96,7 @@ export type BatchSummary = {
   contract_hash: string;
   ready_for_load: boolean;
   totals: SeverityCounts;
+  pending_reviews: number;
   entries: FileSummary[];
 };
 
@@ -107,3 +111,34 @@ export type ContractInfo = {
 export type ApiResult<T> =
   | { data: T; error: null }
   | { data: null; error: string };
+
+export type BatchListItem = {
+  id: string;
+  period: string;
+  analyst_name: string;
+  created_at: string;
+  ready_for_load: boolean;
+  file_count: number;
+};
+
+export type AuditSnapshot = {
+  file?: string;
+  column?: string;
+  target?: string;
+  status?: string;
+  computed?: Disposition;
+  final?: Disposition;
+  counts?: SeverityCounts;
+};
+
+export type AuditEntry = {
+  id: string;
+  created_at: string;
+  actor: string;
+  action: "mapping_accepted" | "mapping_rejected" | "override_created" | "override_withdrawn";
+  entity_type: string;
+  entity_id: string;
+  before: AuditSnapshot | null;
+  after: AuditSnapshot | null;
+  justification: string | null;
+};

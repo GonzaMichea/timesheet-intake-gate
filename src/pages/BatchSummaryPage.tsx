@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
+import BatchTabs from "../components/BatchTabs";
 import BatchVerdict from "../components/BatchVerdict";
 import SiteRow from "../components/SiteRow";
 import { useDocumentTitle } from "../hooks/useDocumentTitle";
@@ -50,6 +51,7 @@ export default function BatchSummaryPage() {
 
   return (
     <div>
+      <BatchTabs batchId={batch.id} pendingReviews={batch.pending_reviews} />
       <BatchVerdict batch={batch} />
       {batch.entries.length === 0 ? (
         <p className="mt-8 text-graphite">Este lote no tiene entradas para mostrar.</p>

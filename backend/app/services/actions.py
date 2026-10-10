@@ -27,8 +27,11 @@ def snapshot(db: Session, file: m.BatchFile) -> dict:
 
 def audit(db: Session, file: m.BatchFile, actor: str, action: str, entity_type: str, entity_id,
           before, after, justification: str | None = None) -> None:
+    # Se guarda el nombre de la sede dentro del registro para poder mostrarlo sin consultar otras tablas
+    where = {"file": file.site or file.filename}
     db.add(m.AuditLog(batch_id=file.batch_id, actor=actor, action=action, entity_type=entity_type,
-                      entity_id=str(entity_id), before=before, after=after, justification=justification))
+                      entity_id=str(entity_id), before={**before, **where}, after={**after, **where},
+                      justification=justification))
 
 
 def check_justification(text: str) -> str:

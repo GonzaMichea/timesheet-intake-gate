@@ -31,3 +31,6 @@ export const DISPOSITIONS: Record<
     border: "border-block",
   },
 };
+
+// Orden de restricción: un override que baja en este orden "relaja" la disposición calculada (R9.4)
+export const RANK: Record<Disposition, number> = { LOAD: 0, LOAD_WITH_WARNINGS: 1, QUARANTINE: 2, BLOCK: 3 };

@@ -2,7 +2,7 @@
 import uuid
 from datetime import datetime, timezone
 
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from backend.app.db import models as m
@@ -139,8 +139,13 @@ def compute_ready(db: Session, batch_id) -> bool:
     return all(final_disposition(db, f) not in BLOCKING for f in files)
 
 
-def review_out(review: m.MappingReview, file: m.BatchFile) -> MappingReviewOut:
+def missing_columns_of(db: Session, file: m.BatchFile) -> list[str]:
+    return sorted({f.column_name for f in findings_of(db, file.id) if f.code == "D04" and f.status == "open"})
+
+
+def review_out(review: m.MappingReview, file: m.BatchFile, missing: list[str] | None = None) -> MappingReviewOut:
     return MappingReviewOut(
+        missing_columns=missing or [],
         id=str(review.id), file_id=str(file.id), filename=file.filename, site=file.site,
         source_column=review.source_column, candidate_column=review.candidate_column,
         candidate_score=float(review.candidate_score) if review.candidate_score is not None else None,
@@ -163,8 +168,11 @@ def batch_summary(db: Session, batch: m.Batch) -> BatchSummary:
     for entry in entries:
         for severity in ("BLOCKER", "ERROR", "WARNING"):
             setattr(totals, severity, getattr(totals, severity) + getattr(entry.counts, severity))
+    file_ids = [e.id for e in entries]
+    pending = db.scalar(select(func.count()).select_from(m.MappingReview).where(
+        m.MappingReview.file_id.in_([uuid.UUID(i) for i in file_ids]), m.MappingReview.status == "pending")) or 0
     return BatchSummary(
-        id=str(batch.id), period=batch.period, analyst_name=batch.analyst_name, created_at=iso(batch.created_at),
+        pending_reviews=pending, id=str(batch.id), period=batch.period, analyst_name=batch.analyst_name, created_at=iso(batch.created_at),
         processing_ms=batch.processing_ms, contract_hash=batch.contract_hash,
         ready_for_load=batch.ready_for_load, totals=totals, entries=entries,
     )
@@ -176,7 +184,7 @@ def file_detail(db: Session, file: m.BatchFile) -> FileDetail:
     findings = findings_of(db, file.id)
     reviews = db.scalars(select(m.MappingReview).where(m.MappingReview.file_id == file.id)
                          .order_by(m.MappingReview.source_column))
-    missing = sorted({f.column_name for f in findings if f.code == "D04" and f.status == "open"})
+    missing = missing_columns_of(db, file)
     return FileDetail(
         **file_summary(db, file).model_dump(), period=batch.period,
         findings=[FindingOut(

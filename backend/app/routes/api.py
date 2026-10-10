@@ -17,7 +17,8 @@ from backend.app.schemas import (
 from backend.app.services import actions, batches
 from backend.app.services.contract_store import current_bundle
 from backend.app.services.views import (
-    batch_files, batch_summary, file_detail, file_summary, get_batch, get_file, iso, review_out,
+    batch_files, batch_summary, file_detail, file_summary, get_batch, get_file, iso, missing_columns_of,
+    review_out,
 )
 
 router = APIRouter(prefix="/api")
@@ -65,7 +66,8 @@ def review_queue(batch_id: str, db: Session = Depends(get_db)):
     by_id = {f.id: f for f in files}
     pending = db.scalars(select(m.MappingReview).where(m.MappingReview.file_id.in_(by_id), m.MappingReview.status == "pending")
                          .order_by(m.MappingReview.created_at, m.MappingReview.source_column)).all()
-    return ReviewQueue(pending=[review_out(r, by_id[r.file_id]) for r in pending],
+    missing = {f.id: missing_columns_of(db, f) for f in files}
+    return ReviewQueue(pending=[review_out(r, by_id[r.file_id], missing[r.file_id]) for r in pending],
                        files=[file_summary(db, f) for f in files])
 
 
