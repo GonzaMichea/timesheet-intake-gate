@@ -352,8 +352,8 @@ def write_batches(batches, out: Path):
         folder.mkdir(parents=True)
         for name, content in batch.files.items():
             (folder / name).write_bytes(content)
-        (folder / "ground_truth.json").write_text(
-            json.dumps(batch.truth(), ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        text = json.dumps(batch.truth(), ensure_ascii=False, indent=2) + "\n"
+        (folder / "ground_truth.json").write_bytes(text.encode("utf-8"))  # siempre LF, también en Windows
 
 
 def main() -> int:

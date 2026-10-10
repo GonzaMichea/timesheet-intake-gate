@@ -73,7 +73,7 @@ Cada criterio tiene un ID `R<n>.<m>` que se referencia desde `design.md`, `tasks
 - **R2.4** SI un `.zip` está corrupto o la carga supera el tamaño máximo configurado (por defecto 4 MB en total por request, bajo el límite de 4,5 MB de Vercel), ENTONCES EL sistema DEBERÁ rechazar el lote con un mensaje que nombre el problema.
 - **R2.5** EL sistema DEBERÁ leer CSV en UTF-8 (con o sin BOM) con respaldo a Latin-1, detectando separador `,` o `;`, y DEBERÁ leer la primera hoja de cada `.xlsx`.
 - **R2.6** SI un archivo de sede no se puede leer o no tiene fila de encabezados, ENTONCES EL sistema DEBERÁ registrar D04 para todas las columnas requeridas con la evidencia "archivo ilegible o sin encabezados".
-- **R2.7** EL sistema DEBERÁ registrar el tiempo de procesamiento determinístico del lote y de cada archivo, en milisegundos.
+- **R2.7** EL sistema DEBERÁ registrar el tiempo de procesamiento determinístico del lote, en milisegundos (el motor es puro y no lee el reloj, ver design §4.1).
 - **R2.8** EL sistema DEBERÁ tratar cada validación como un lote nuevo e independiente; los archivos de un lote existente no se reemplazan.
 
 ## R3. Validación de nombres y completitud (D01, D02, D03)
