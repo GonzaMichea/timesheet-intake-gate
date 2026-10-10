@@ -19,7 +19,7 @@
   *Listo cuando:* `vercel dev` responde `/api/health` en local.
 - [x] **T0.5 🧑 Vercel.** El usuario importa el repositorio en Vercel y carga `LLM_MODEL` (las demás variables, después).
   *Listo cuando:* la URL de producción muestra la página y `/api/health` responde con las versiones de pandas. **Si el build falla por tamaño → se aplica el plan B de design §11 y se avisa al usuario.**
-- [ ] **T0.6 🧑 Supabase.** El usuario crea el proyecto. Se escribe `supabase/migrations/001_create_core_tables.sql` (7 tablas, RLS, rol `tig_api`, trigger de solo inserción). El usuario lo ejecuta en el SQL Editor, le asigna la contraseña a `tig_api` y carga `DATABASE_URL` (pooler 6543) en `.env.local` y en Vercel.
+- [x] **T0.6 🧑 Supabase.** El usuario crea el proyecto. Se escribe `supabase/migrations/001_create_core_tables.sql` (7 tablas, RLS, rol `tig_api`, trigger de solo inserción). El usuario lo ejecuta en el SQL Editor, le asigna la contraseña a `tig_api` y carga `DATABASE_URL` (pooler 6543) en `.env.local` y en Vercel.
   *Listo cuando:* `/api/health` informa `db: ok` en la URL de Vercel, y una consulta con la clave anon a cualquier tabla devuelve vacío o error de permisos.
 
 ## Incremento 1 — Contrato y motor determinístico (rama `feature/motor`)
@@ -113,7 +113,7 @@ Cada pantalla cumple: estados cargando/vacío/error, 375/768/1280 px, hover y fo
 
 | Incremento | Estado |
 |---|---|
-| 0 Base verificada | casi lista (T0.1–T0.5 listas; T0.6: BD conectada, falta probar clave anon) |
+| 0 Base verificada | **completo** |
 | 1 Motor | pendiente |
 | 2 Evaluación | pendiente |
 | 3 API | pendiente |
