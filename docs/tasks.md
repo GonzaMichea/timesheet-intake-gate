@@ -113,7 +113,7 @@ Cada pantalla cumple: estados cargando/vacío/error, 375/768/1280 px, hover y fo
 
 | Incremento | Estado |
 |---|---|
-| 0 Base verificada | en curso (T0.1–T0.5 listas; falta T0.6 Supabase) |
+| 0 Base verificada | casi lista (T0.1–T0.5 listas; T0.6: BD conectada, falta probar clave anon) |
 | 1 Motor | pendiente |
 | 2 Evaluación | pendiente |
 | 3 API | pendiente |
