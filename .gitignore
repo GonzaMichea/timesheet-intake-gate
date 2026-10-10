@@ -1,0 +1,21 @@
+# Claves y entorno local (nunca se suben)
+.env
+.env.local
+.env*.local
+
+# Node / Vite
+node_modules/
+dist/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+
+# Vercel
+.vercel/
+
+# Editor / SO
+.DS_Store
+Thumbs.db
