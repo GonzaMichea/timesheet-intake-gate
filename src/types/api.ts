@@ -2,6 +2,7 @@
 
 export type Health = {
   status: string;
+  db: "ok" | "no_configurada" | "error";
   python: string;
   pandas: string;
   openpyxl: string;

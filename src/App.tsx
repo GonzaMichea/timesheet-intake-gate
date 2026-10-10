@@ -2,6 +2,12 @@ import { useCallback, useEffect, useState } from "react";
 import { getHealth } from "./services/api";
 import type { Health } from "./types/api";
 
+const DB_LABELS = {
+  ok: "conectada",
+  no_configurada: "sin configurar",
+  error: "sin conexión",
+} as const;
+
 // Pantalla temporal del incremento 0: confirma que frontend y API conversan en Vercel
 export default function App() {
   const [health, setHealth] = useState<Health | null>(null);
@@ -47,6 +53,10 @@ export default function App() {
           <dl className="mt-4 grid grid-cols-2 gap-y-2 text-sm tabular-nums sm:max-w-sm">
             <dt className="text-graphite">Estado</dt>
             <dd className="font-medium text-load">{health.status}</dd>
+            <dt className="text-graphite">Base de datos</dt>
+            <dd className={health.db === "ok" ? "font-medium text-load" : "font-medium text-block"}>
+              {DB_LABELS[health.db]}
+            </dd>
             <dt className="text-graphite">Python</dt>
             <dd>{health.python}</dd>
             <dt className="text-graphite">pandas</dt>
