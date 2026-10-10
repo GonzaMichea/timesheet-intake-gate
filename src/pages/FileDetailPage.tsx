@@ -1,7 +1,7 @@
 import { ArrowLeft } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import AiPlaceholder from "../components/AiPlaceholder";
+import AiSection from "../components/AiSection";
 import DispositionSeal from "../components/DispositionSeal";
 import FindingItem from "../components/FindingItem";
 import FindingsFilters from "../components/FindingsFilters";
@@ -120,7 +120,7 @@ export default function FileDetailPage() {
         )}
       </section>
 
-      <AiPlaceholder />
+      <AiSection file={file} />
     </div>
   );
 }

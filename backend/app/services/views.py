@@ -8,7 +8,7 @@ from sqlalchemy.orm import Session
 from backend.app.db import models as m
 from backend.app.errors import ApiError
 from backend.app.schemas import (
-    BatchSummary, DefectBrief, FileDetail, FileSummary, FindingOut, MappingReviewOut, OverrideOut,
+    AiResultOut, AiSuggestionOut, BatchSummary, DefectBrief, FileDetail, FileSummary, FindingOut, MappingReviewOut, OverrideOut,
     SeverityCounts,
 )
 from backend.app.services.contract_store import bundle_from_texts
@@ -143,9 +143,27 @@ def missing_columns_of(db: Session, file: m.BatchFile) -> list[str]:
     return sorted({f.column_name for f in findings_of(db, file.id) if f.code == "D04" and f.status == "open"})
 
 
-def review_out(review: m.MappingReview, file: m.BatchFile, missing: list[str] | None = None) -> MappingReviewOut:
+def latest_ai(db: Session, file_id) -> dict[str, AiResultOut]:
+    """Último resultado de IA vigente (no obsoleto) de cada tipo."""
+    rows = db.scalars(select(m.AiResult).where(m.AiResult.file_id == file_id, m.AiResult.is_stale.is_(False))
+                      .order_by(m.AiResult.created_at, m.AiResult.id))
+    return {r.kind: AiResultOut(id=str(r.id), kind=r.kind, status=r.status, model=r.model, latency_ms=r.latency_ms,
+                                reason=r.reason, payload=r.payload, created_at=iso(r.created_at)) for r in rows}
+
+
+def ai_suggestions(db: Session, file_id) -> dict[str, AiSuggestionOut]:
+    """Sugerencias de mapeo de la IA por columna de origen."""
+    result = latest_ai(db, file_id).get("mapping")
+    if not result or result.status != "ok" or not result.payload:
+        return {}
+    return {s["source_column"]: AiSuggestionOut(**{k: s[k] for k in AiSuggestionOut.model_fields})
+            for s in result.payload.get("suggestions", [])}
+
+
+def review_out(review: m.MappingReview, file: m.BatchFile, missing: list[str] | None = None,
+               suggestions: dict[str, AiSuggestionOut] | None = None) -> MappingReviewOut:
     return MappingReviewOut(
-        missing_columns=missing or [],
+        missing_columns=missing or [], ai_suggestion=(suggestions or {}).get(review.source_column),
         id=str(review.id), file_id=str(file.id), filename=file.filename, site=file.site,
         source_column=review.source_column, candidate_column=review.candidate_column,
         candidate_score=float(review.candidate_score) if review.candidate_score is not None else None,
@@ -192,10 +210,10 @@ def file_detail(db: Session, file: m.BatchFile) -> FileDetail:
             severity=f.severity, column=f.column_name, rule_id=f.rule_id, rule_text=f.rule_text,
             affected_count=f.affected_count, affected_rows=f.affected_rows, sample_rows=f.sample_rows,
             evidence=f.evidence, status=f.status) for f in findings],
-        mappings=[review_out(r, file) for r in reviews],
+        mappings=[review_out(r, file, suggestions=ai_suggestions(db, file.id)) for r in reviews],
         overrides=[OverrideOut(id=str(o.id), disposition=o.disposition, justification=o.justification,
                                actor=o.actor, created_at=iso(o.created_at),
                                computed_disposition=o.computed_disposition)
                    for o in overrides_of(db, file.id)],
-        missing_columns=missing, required_columns=list(contract.columns),
+        missing_columns=missing, required_columns=list(contract.columns), ai=latest_ai(db, file.id),
     )

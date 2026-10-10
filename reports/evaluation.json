@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-10T15:46:22+00:00",
+  "generated_at": "2026-10-10T15:52:30+00:00",
   "summary": {
     "by_code": {
       "D01": {
@@ -68,6 +68,7 @@
     "disposition_accuracy": 1.0,
     "wrong_dispositions": 0,
     "d05_precision": 1.0,
+    "ai": null,
     "units": {
       "expected": 66,
       "detected": 66,
@@ -76,8 +77,9 @@
   },
   "batches": [
     {
+      "ai": null,
       "batch": "batch_00_clean",
-      "ms": 78.1,
+      "ms": 78.8,
       "files": 4,
       "wrong_dispositions": [],
       "d05_correct": 0,
@@ -86,8 +88,9 @@
       "false_positives": []
     },
     {
+      "ai": null,
       "batch": "batch_01_old_template",
-      "ms": 52.9,
+      "ms": 53.7,
       "files": 4,
       "wrong_dispositions": [],
       "d05_correct": 2,
@@ -96,8 +99,9 @@
       "false_positives": []
     },
     {
+      "ai": null,
       "batch": "batch_02_wrong_files",
-      "ms": 43.1,
+      "ms": 42.2,
       "files": 5,
       "wrong_dispositions": [],
       "d05_correct": 0,
@@ -106,8 +110,9 @@
       "false_positives": []
     },
     {
+      "ai": null,
       "batch": "batch_03_approvals",
-      "ms": 74.2,
+      "ms": 75.7,
       "files": 4,
       "wrong_dispositions": [],
       "d05_correct": 0,
@@ -116,8 +121,9 @@
       "false_positives": []
     },
     {
+      "ai": null,
       "batch": "batch_04_partial",
-      "ms": 29.2,
+      "ms": 29.5,
       "files": 5,
       "wrong_dispositions": [],
       "d05_correct": 1,
@@ -126,8 +132,9 @@
       "false_positives": []
     },
     {
+      "ai": null,
       "batch": "batch_05_mixed",
-      "ms": 40.7,
+      "ms": 42.0,
       "files": 4,
       "wrong_dispositions": [],
       "d05_correct": 1,
