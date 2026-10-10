@@ -1,0 +1,94 @@
+{
+  "batch": "batch_04_partial",
+  "period": "2026-09",
+  "files": [
+    {
+      "file": "MISSING:SCL",
+      "site": "SCL",
+      "expected_disposition": "BLOCK"
+    },
+    {
+      "file": "MISSING:VAP",
+      "site": "VAP",
+      "expected_disposition": "BLOCK"
+    },
+    {
+      "file": "ts_ccp_202609.csv",
+      "site": null,
+      "expected_disposition": "QUARANTINE"
+    },
+    {
+      "file": "MISSING:CCP",
+      "site": "CCP",
+      "expected_disposition": "BLOCK"
+    },
+    {
+      "file": "TS_ANF_202609.xlsx",
+      "site": "ANF",
+      "expected_disposition": "BLOCK"
+    }
+  ],
+  "defects": [
+    {
+      "file": "MISSING:CCP",
+      "code": "D01",
+      "column": "",
+      "rows": []
+    },
+    {
+      "file": "MISSING:SCL",
+      "code": "D01",
+      "column": "",
+      "rows": []
+    },
+    {
+      "file": "MISSING:VAP",
+      "code": "D01",
+      "column": "",
+      "rows": []
+    },
+    {
+      "file": "TS_ANF_202609.xlsx",
+      "code": "D04",
+      "column": "shift_code",
+      "rows": []
+    },
+    {
+      "file": "TS_ANF_202609.xlsx",
+      "code": "D05",
+      "column": "Turno",
+      "rows": []
+    },
+    {
+      "file": "TS_ANF_202609.xlsx",
+      "code": "D08",
+      "column": "",
+      "rows": [
+        288,
+        289
+      ]
+    },
+    {
+      "file": "TS_ANF_202609.xlsx",
+      "code": "D10",
+      "column": "overtime_hours",
+      "rows": [
+        151,
+        285
+      ]
+    },
+    {
+      "file": "ts_ccp_202609.csv",
+      "code": "D02",
+      "column": "",
+      "rows": []
+    }
+  ],
+  "mappings": [
+    {
+      "file": "TS_ANF_202609.xlsx",
+      "column": "Turno",
+      "target": "shift_code"
+    }
+  ]
+}

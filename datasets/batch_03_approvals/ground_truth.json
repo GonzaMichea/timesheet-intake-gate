@@ -1,0 +1,84 @@
+{
+  "batch": "batch_03_approvals",
+  "period": "2026-09",
+  "files": [
+    {
+      "file": "TS_SCL_202609.csv",
+      "site": "SCL",
+      "expected_disposition": "QUARANTINE"
+    },
+    {
+      "file": "TS_VAP_202609.xlsx",
+      "site": "VAP",
+      "expected_disposition": "LOAD_WITH_WARNINGS"
+    },
+    {
+      "file": "TS_CCP_202609.csv",
+      "site": "CCP",
+      "expected_disposition": "BLOCK"
+    },
+    {
+      "file": "TS_ANF_202609.xlsx",
+      "site": "ANF",
+      "expected_disposition": "LOAD_WITH_WARNINGS"
+    }
+  ],
+  "defects": [
+    {
+      "file": "TS_ANF_202609.xlsx",
+      "code": "D06",
+      "column": "Comentarios",
+      "rows": []
+    },
+    {
+      "file": "TS_CCP_202609.csv",
+      "code": "D04",
+      "column": "approved_by",
+      "rows": []
+    },
+    {
+      "file": "TS_SCL_202609.csv",
+      "code": "D12",
+      "column": "approved_by",
+      "rows": [
+        94,
+        238,
+        284
+      ]
+    },
+    {
+      "file": "TS_SCL_202609.csv",
+      "code": "D12",
+      "column": "employee_id",
+      "rows": [
+        24,
+        104,
+        132,
+        151,
+        167,
+        208,
+        249
+      ]
+    },
+    {
+      "file": "TS_VAP_202609.xlsx",
+      "code": "D07",
+      "column": "work_date",
+      "rows": [
+        32,
+        171,
+        266
+      ]
+    },
+    {
+      "file": "TS_VAP_202609.xlsx",
+      "code": "D12",
+      "column": "approval_date",
+      "rows": [
+        102,
+        134
+      ]
+    }
+  ],
+  "mappings": []
+}

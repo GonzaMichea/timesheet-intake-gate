@@ -1,0 +1,92 @@
+{
+  "batch": "batch_02_wrong_files",
+  "period": "2026-09",
+  "files": [
+    {
+      "file": "TS_SCL_202608.csv",
+      "site": "SCL",
+      "expected_disposition": "BLOCK"
+    },
+    {
+      "file": "resumen_horas.csv",
+      "site": null,
+      "expected_disposition": "QUARANTINE"
+    },
+    {
+      "file": "TS_VAP_202609.csv",
+      "site": "VAP",
+      "expected_disposition": "BLOCK"
+    },
+    {
+      "file": "TS_CCP_202609.csv",
+      "site": "CCP",
+      "expected_disposition": "LOAD_WITH_WARNINGS"
+    },
+    {
+      "file": "TS_ANF_202609.xlsx",
+      "site": "ANF",
+      "expected_disposition": "LOAD"
+    }
+  ],
+  "defects": [
+    {
+      "file": "TS_CCP_202609.csv",
+      "code": "D10",
+      "column": "",
+      "rows": [
+        112,
+        192,
+        255
+      ]
+    },
+    {
+      "file": "TS_CCP_202609.csv",
+      "code": "D11",
+      "column": "absence_code",
+      "rows": [
+        64,
+        151
+      ]
+    },
+    {
+      "file": "TS_SCL_202608.csv",
+      "code": "D03",
+      "column": "",
+      "rows": []
+    },
+    {
+      "file": "TS_VAP_202609.csv",
+      "code": "D07",
+      "column": "regular_hours",
+      "rows": [
+        108,
+        203
+      ]
+    },
+    {
+      "file": "TS_VAP_202609.csv",
+      "code": "D10",
+      "column": "regular_hours",
+      "rows": [
+        45,
+        101
+      ]
+    },
+    {
+      "file": "TS_VAP_202609.csv",
+      "code": "D11",
+      "column": "shift_code",
+      "rows": [
+        178,
+        215
+      ]
+    },
+    {
+      "file": "resumen_horas.csv",
+      "code": "D02",
+      "column": "",
+      "rows": []
+    }
+  ],
+  "mappings": []
+}
